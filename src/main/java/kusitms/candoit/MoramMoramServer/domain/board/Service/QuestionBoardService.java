@@ -18,4 +18,6 @@ public interface QuestionBoardService {
     List<QuestionBoardDTO> getBoard(int page);
 
     Long like(Long questionBoardId, QuestionBoardLikeDTO questionBoardLikeDTO);
+
+    List<QuestionBoardDTO> getTopPosts();
 }

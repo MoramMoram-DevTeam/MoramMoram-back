@@ -22,6 +22,7 @@ import java.util.Objects;
 public class BoardController {
 
     //TODO 예외처리
+    //test
     private final QuestionBoardService questionBoardService;
 
     private final UserRepository userRepository;
@@ -94,6 +95,12 @@ public class BoardController {
         questionBoardService.remove(questionBoardId);
 
         return new BaseResponse<>("게시글 삭제했습니다.");
+    }
+
+    @GetMapping(
+            value = "/questions/top-posts" )
+    public Object getTopPosts() throws Exception {
+        return questionBoardService.getTopPosts();
     }
 }
 

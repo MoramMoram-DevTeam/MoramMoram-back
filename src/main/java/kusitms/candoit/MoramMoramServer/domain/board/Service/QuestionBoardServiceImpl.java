@@ -112,5 +112,17 @@ public class QuestionBoardServiceImpl implements QuestionBoardService {
 
     }
 
+    @Override
+    public List<QuestionBoardDTO> getTopPosts() {
+       List<QuestionBoard> result = questionBoardRepository.findTop();
+       log.info("자자 여기는 들어왔나요?");
+       List<QuestionBoardDTO> topBoard = result.stream()
+                .map(m-> modelMapper.map(m, QuestionBoardDTO.class))
+                .collect(Collectors.toList());
+
+        //List<QuestionBoardDTO> resultList = result.stream().map(post -> modelMapper.map(post, PostResponseDto.class)).collect(Collectors.toList());
+        return topBoard;
+    }
+
 
 }
