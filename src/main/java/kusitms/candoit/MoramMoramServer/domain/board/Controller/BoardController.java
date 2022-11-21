@@ -22,6 +22,7 @@ import java.util.Objects;
 public class BoardController {
 
     //TODO 예외처리
+    //test
     private final QuestionBoardService questionBoardService;
 
     private final UserRepository userRepository;
