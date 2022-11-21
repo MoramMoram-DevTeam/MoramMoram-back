@@ -83,6 +83,7 @@ public class UserOfficeService {
 
     // Service
 
+    // 회원가입
     public ResponseEntity<UserDto.registerResponse> register(UserDto.officeRegister request) {
         Authority authority = Authority.builder()
                 .authorityName("ROLE_OFFICE")

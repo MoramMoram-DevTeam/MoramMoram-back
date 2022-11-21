@@ -32,7 +32,11 @@ public enum CustomErrorCode {
 
     // 알수 없는 오류의 처리
     INTERNAL_SERVER_ERROR("서버에 오류가 발생했습니다."),
-    INVALID_REQUEST("잘못된 요청입니다.");
+    INVALID_REQUEST("잘못된 요청입니다."),
+
+    // 신청서
+    APPLICATION_NO_EXIST("존재하지 않는 신청서입니다."),
+    NO_AUTHORITY("접근 권한이 없습니다.");
 
     private final String statusMessage;
 }
