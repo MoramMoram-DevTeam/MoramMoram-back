@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -27,6 +28,30 @@ public class TipBoardServiceImpl implements TipBoardService {
         Long tipBoardId = tipBoardRepository.save(board).getTipBoardId();
 
         return tipBoardId;
+    }
+
+    @Override
+    public void modify(Long tipBoardId, TipBoardDTO tipBoardDTO) {
+        Optional<TipBoard> result = tipBoardRepository.findById(tipBoardId);
+
+        result.ifPresent( board ->{
+            if(tipBoardDTO.getTitle() != null){
+                board.changTitle(tipBoardDTO.getTitle());
+                log.info("제목 바꾸고 나서 -> "+board.getUpdatedAt());
+                log.info("맨처음 ->  "+board.getBoardDate());
+            }
+            if(tipBoardDTO.getNote()!=null){
+                board.changeNote(tipBoardDTO.getNote());
+                log.info("내용 바꾸고 나서 -> "+board.getUpdatedAt());
+            }
+            if(tipBoardDTO.getImg() !=null ){
+                board.changeImg(tipBoardDTO.getImg());
+            }
+            //생성일 update
+            board.updateBoardDate();
+            log.info("최종 ->  "+board.getBoardDate());
+            tipBoardRepository.save(board);
+        });
     }
 
 }
