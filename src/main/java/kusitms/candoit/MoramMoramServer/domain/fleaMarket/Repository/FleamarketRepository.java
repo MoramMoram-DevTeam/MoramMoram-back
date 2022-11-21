@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FleamarketRepository extends JpaRepository<Fleamarket, Long> {
     List<Fleamarket> findByMarketNameContaining(String m_name);
+    Fleamarket findFleamarketById(Long m_id);
 }
