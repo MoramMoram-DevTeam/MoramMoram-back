@@ -12,9 +12,7 @@ import kusitms.candoit.MoramMoramServer.global.config.Response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Objects;
@@ -61,5 +59,12 @@ public class TipBoardController {
         Long questionBoardId = tipBoardService.register(boardDTO);
 
         return new BaseResponse<>(questionBoardId);
+    }
+
+    @PatchMapping(value = "/tips/{postId}")
+    public BaseResponse<String> modifyOne(@PathVariable("postId")Long tipBoardId, @RequestBody TipBoardDTO boardDTO){
+        tipBoardService.modify( tipBoardId,boardDTO);
+
+        return new BaseResponse<>("내용 수정했습니다.");
     }
 }
