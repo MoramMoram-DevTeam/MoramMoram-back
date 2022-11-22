@@ -82,6 +82,15 @@ public class ApplicationService {
         app.setSubCategory4(appDto.getSubCategory4());
         app.setSubCategory5(appDto.getSubCategory5());
 
+        app.setStall(appDto.isStall());
+        app.setShelf(appDto.isShelf());
+        app.setLight(appDto.isLight());
+        app.setWrapping(appDto.isWrapping());
+        app.setHanger(appDto.isHanger());
+        app.setMannequin(appDto.isMannequin());
+        app.setMirror(appDto.isMirror());
+        app.setNone(appDto.isNone());
+
         app.setMarketExp(appDto.getMarketExp());
         app.setOnlineExp(appDto.isOnlineExp());
         app.setPriceAvg(appDto.getPriceAvg());

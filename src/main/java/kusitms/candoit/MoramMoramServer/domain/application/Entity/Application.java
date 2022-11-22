@@ -77,10 +77,33 @@ public class Application {
     @Column(name = "online_exp")
     private boolean onlineExp;
 
-    //    보유 집기 (주어진 테이블 내에서 선택)
-    @JoinColumn
-    @OneToOne
-    private Utensil utensil;
+    //    보유 집기
+    // 가판대
+    @Column(columnDefinition = "boolean default false")
+    private boolean stall;
+    // 진열대
+    @Column(columnDefinition = "boolean default false")
+    private boolean shelf;
+    // 조명
+    @Column(columnDefinition = "boolean default false")
+    private boolean light;
+    // 보자기
+    @Column(columnDefinition = "boolean default false")
+    private boolean wrapping;
+    // 행거
+    @Column(columnDefinition = "boolean default false")
+    private boolean hanger;
+    // 마네킹
+    @Column(columnDefinition = "boolean default false")
+    private boolean mannequin;
+    // 거울
+    @Column(columnDefinition = "boolean default false")
+    private boolean mirror;
+    // 없음
+    @Column(columnDefinition = "boolean default false")
+    private boolean none;
+
+
 
     //    플리마켓 경험 사진 첨부
     @Column(name = "certificate_img", columnDefinition = "TEXT")

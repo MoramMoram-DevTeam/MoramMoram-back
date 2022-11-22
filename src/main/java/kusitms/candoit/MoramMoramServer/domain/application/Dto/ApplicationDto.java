@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -34,7 +36,23 @@ public class ApplicationDto {
     private Integer marketExp;
     private boolean onlineExp;
 
-//    private Utensil utensil;
+    // 가판대
+    private boolean stall;
+    // 진열대
+    private boolean shelf;
+    // 조명
+    private boolean light;
+    // 보자기
+    private boolean wrapping;
+    // 행거
+    private boolean hanger;
+    // 마네킹
+    private boolean mannequin;
+    // 거울
+    private boolean mirror;
+    // 없음
+    private boolean none;
+
     private String certificateImg;
 
     private String priceAvg;
@@ -60,6 +78,14 @@ public class ApplicationDto {
                 .subCategory5(subCategory5)
                 .marketExp(marketExp)
                 .onlineExp(onlineExp)
+                .stall(stall)
+                .shelf(shelf)
+                .light(light)
+                .wrapping(wrapping)
+                .hanger(hanger)
+                .mannequin(mannequin)
+                .mirror(mirror)
+                .none(none)
                 .certificateImg(certificateImg)
                 .priceAvg(priceAvg)
                 .itemImg(itemImg)
