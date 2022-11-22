@@ -76,4 +76,13 @@ public class TipBoardController {
 
         return new BaseResponse<>("삭제했습니다.");
     }
+
+    //글 상세 보기
+    @GetMapping(
+            value = "/tips/{postId}"
+    )
+    public BaseResponse<TipBoardDTO> getOne(@PathVariable("postId") Long tipBoardId) throws Exception{
+        TipBoardDTO tipBoard = tipBoardService.readOne(tipBoardId);
+        return new BaseResponse<>(tipBoard);
+    }
 }
