@@ -11,4 +11,7 @@ public interface TipBoardService {
     void modify(Long tipBoardId,TipBoardDTO tipBoardDTO);
 
     void deleteOne(Long tipBoardId);
+
+    //게시글 자세히보기
+    TipBoardDTO readOne(Long tipBoardId);
 }

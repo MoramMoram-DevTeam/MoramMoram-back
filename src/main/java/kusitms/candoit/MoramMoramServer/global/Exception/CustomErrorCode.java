@@ -41,9 +41,11 @@ public enum CustomErrorCode {
     // 플리마켓
     MARKET_NOT_EXIST("존재하지 않는 플리마켓입니다."),
 
-    POST_NOT_FOUND("게시물을 찾을 수 없습니다.");
+    POST_NOT_FOUND("게시물을 찾을 수 없습니다."),
 
+    //게시판
+    POST_NO_EXIST("존재하지 않는 게시글입니다.");
 
-    // 정보 게시판
     private final String statusMessage;
+
 }
