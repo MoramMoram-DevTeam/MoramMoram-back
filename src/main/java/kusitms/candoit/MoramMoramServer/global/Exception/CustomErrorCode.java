@@ -36,9 +36,14 @@ public enum CustomErrorCode {
 
     // 신청서
     APPLICATION_NO_EXIST("존재하지 않는 신청서입니다."),
-    NO_AUTHORITY("접근 권한이 없습니다.");
+    NO_AUTHORITY("접근 권한이 없습니다."),
+
+    // 플리마켓
+    MARKET_NOT_EXIST("존재하지 않는 플리마켓입니다."),
+
+    POST_NOT_FOUND("게시물을 찾을 수 없습니다.");
+
 
     // 정보 게시판
-
     private final String statusMessage;
 }
