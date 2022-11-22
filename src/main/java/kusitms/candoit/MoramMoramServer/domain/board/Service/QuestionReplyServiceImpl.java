@@ -3,6 +3,7 @@ package kusitms.candoit.MoramMoramServer.domain.board.Service;
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.*;
 import kusitms.candoit.MoramMoramServer.domain.board.Entity.QuestionBoard;
 import kusitms.candoit.MoramMoramServer.domain.board.Entity.QuestionReply;
+import kusitms.candoit.MoramMoramServer.domain.board.Repository.QuestionBoardRepository;
 import kusitms.candoit.MoramMoramServer.domain.board.Repository.QuestionReplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +24,16 @@ public class QuestionReplyServiceImpl implements QuestionReplyService{
     private final QuestionReplyRepository questionReplyRepository;
     private final ModelMapper modelMapper;
 
+    private final QuestionBoardRepository questionBoardRepository;
+
     @Override
     public Long register(QuestionReplyDTO questionReplyDTO){
 
         QuestionReply reply = modelMapper.map(questionReplyDTO, QuestionReply.class);
-        log.info("여기는.....?");
+
         //댓글 수 ++
         reply.getQuestionBoard().updateReplyCnt();
+        questionBoardRepository.save(reply.getQuestionBoard());
         //댓글 생성
         Long id = questionReplyRepository.save(reply).getQuestionReplyId();
 
@@ -45,7 +49,7 @@ public class QuestionReplyServiceImpl implements QuestionReplyService{
     @Override
     public List<QuestionReplyDTO> getReplyList(int page, Long questionBoardId) {
         Page<QuestionReply> replies = questionReplyRepository.listOfBoard(questionBoardId, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "updatedAt")));
-        log.info("2번");
+
         List<QuestionReplyDTO> results = replies.getContent().stream().map(QuestionReply ->
                 modelMapper.map(QuestionReply, QuestionReplyDTO.class)
         ).collect(Collectors.toList());

@@ -42,7 +42,7 @@ public class QuestionBoardServiceImpl implements QuestionBoardService {
 
     @Override
     public QuestionBoardDTO readOne(Long questionBoardId) {
-
+        log.info("성공2");
         Optional<QuestionBoard> result = questionBoardRepository.findById(questionBoardId);
         QuestionBoard board = result.orElseThrow();
         //조회 수 추가

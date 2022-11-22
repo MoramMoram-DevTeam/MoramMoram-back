@@ -62,6 +62,7 @@ public class BoardController {
             value = "/questions/{questionBoardId}"
     )
     public BaseResponse<QuestionBoardDTO> getOne(@PathVariable("questionBoardId") Long questionBoardId) throws Exception{
+
         QuestionBoardDTO questionBoardDTO = questionBoardService.readOne(questionBoardId);
         return new BaseResponse<>(questionBoardDTO);
     }
