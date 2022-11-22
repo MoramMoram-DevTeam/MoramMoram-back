@@ -9,4 +9,6 @@ public interface TipBoardService {
     Long register(TipBoardDTO tipBoardDTO);
 
     void modify(Long tipBoardId,TipBoardDTO tipBoardDTO);
+
+    void deleteOne(Long tipBoardId);
 }
