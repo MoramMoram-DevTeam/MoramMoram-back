@@ -9,10 +9,15 @@ import kusitms.candoit.MoramMoramServer.global.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.NO_AUTHORITY;
 import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.POST_NO_EXIST;
@@ -86,6 +91,17 @@ public class TipBoardServiceImpl implements TipBoardService {
         TipBoardDTO boardDTO = modelMapper.map(board, TipBoardDTO.class);
 
         return boardDTO;
+    }
+
+    @Override
+    public List<TipBoardDTO> getBoard(int page) {
+        Page<TipBoard> boards = tipBoardRepository.findAllByStatus(PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "boardDate")), "ACTIVE");
+
+        List<TipBoardDTO> results = boards.getContent().stream().map(TipBoard ->
+                modelMapper.map(TipBoard, TipBoardDTO.class)
+        ).collect(Collectors.toList());
+
+        return results;
     }
 
 }

@@ -85,4 +85,12 @@ public class TipBoardController {
         TipBoardDTO tipBoard = tipBoardService.readOne(tipBoardId);
         return new BaseResponse<>(tipBoard);
     }
+
+    @GetMapping(
+            value = "/tips/list")
+    public BaseResponse<Object> getList(@RequestParam(value="page", defaultValue="0") int page) throws Exception {
+        Object tipBoardLists = tipBoardService.getBoard(page);
+
+        return new BaseResponse<>(tipBoardLists);
+    }
 }

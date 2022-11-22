@@ -3,6 +3,8 @@ package kusitms.candoit.MoramMoramServer.domain.board.Service;
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.QuestionBoardDTO;
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.TipBoardDTO;
 
+import java.util.List;
+
 public interface TipBoardService {
 
     //게시글 등록
@@ -14,4 +16,6 @@ public interface TipBoardService {
 
     //게시글 자세히보기
     TipBoardDTO readOne(Long tipBoardId);
+
+    List<TipBoardDTO> getBoard(int page);
 }
