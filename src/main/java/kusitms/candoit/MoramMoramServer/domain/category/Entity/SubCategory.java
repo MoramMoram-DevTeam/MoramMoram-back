@@ -1,4 +1,4 @@
-package kusitms.candoit.MoramMoramServer.domain.application.Entity;
+package kusitms.candoit.MoramMoramServer.domain.category.Entity;
 
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

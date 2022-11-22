@@ -1,14 +1,13 @@
 package kusitms.candoit.MoramMoramServer.domain.application.Entity;
 
+import kusitms.candoit.MoramMoramServer.domain.category.Entity.SubCategory;
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,9 +40,18 @@ public class Application {
     private String returnAddress;
 
 //    카테고리 (주어진 테이블 내에서 선택)
-    @JoinColumn
-    @OneToOne
-    private Category category;
+//    @JoinColumn
+//    @OneToOne
+    private Long categoryId;
+    @Column(columnDefinition = "boolean default false")
+    private boolean category1;
+    @Column(columnDefinition = "boolean default false")
+    private boolean category2;
+    @Column(columnDefinition = "boolean default false")
+    private boolean category3;
+    @Column(columnDefinition = "boolean default false")
+    private boolean category4;
+
 
 //    서브 카테고리 (사용자가 직접 입력)
     @JoinColumn

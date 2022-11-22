@@ -9,6 +9,7 @@ import kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode;
 import kusitms.candoit.MoramMoramServer.global.Exception.CustomException;
 import kusitms.candoit.MoramMoramServer.global.config.Jwt.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -17,6 +18,7 @@ import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
@@ -33,8 +35,24 @@ public class ApplicationService {
 
     @Transactional
     public Application newApplication(ApplicationDto applicationDto){
+        boolean test = applicationDto.isCategory1();
+        log.info("------카테고리 테스트(set before): " + String.valueOf(test));
+
         Application app = applicationDto.toEntity();
+
         app.setUserId(getTokenInfo().getId());
+
+        log.info("------카테고리 테스트(set after): " + String.valueOf(test));
+
+
+
+//        app.setCategory(categoryDto.toEntity());
+//        app.setUserId(getTokenInfo().getId());
+
+//        Category category = categoryDto.toEntity();
+//        category.setUserId(getTokenInfo().getId());
+
+//        app.setCategory(category);
 
         // 이미지 처리 필요
 
@@ -59,13 +77,13 @@ public class ApplicationService {
         app.setStoreName(appDto.getStoreName());
         app.setOnlineChannel(appDto.getOnlineChannel());
         app.setReturnAddress(appDto.getReturnAddress());
-        app.setCategory(appDto.getCategory());
-        app.setSubCategory(appDto.getSubCategory());
+//        app.setCategory(appDto.getCategory());
+//        app.setSubCategory(appDto.getSubCategory());
         app.setMarketExp(appDto.getMarketExp());
         app.setOnlineExp(appDto.isOnlineExp());
         app.setPriceAvg(appDto.getPriceAvg());
         app.setRequest(appDto.getRequest());
-        app.setUtensil(appDto.getUtensil());
+//        app.setUtensil(appDto.getUtensil());
 
         // 이미지 처리 필요
 //         certificateImg, itemImg
