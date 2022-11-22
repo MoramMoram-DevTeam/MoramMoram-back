@@ -1,7 +1,9 @@
 package kusitms.candoit.MoramMoramServer.domain.board.Controller;
 
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.QuestionBoardDTO;
+import kusitms.candoit.MoramMoramServer.domain.board.Dto.QuestionBoardLikeDTO;
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.TipBoardDTO;
+import kusitms.candoit.MoramMoramServer.domain.board.Dto.TipBoardLikeDTO;
 import kusitms.candoit.MoramMoramServer.domain.board.Service.TipBoardService;
 import kusitms.candoit.MoramMoramServer.domain.user.Dto.TokenInfoResponseDto;
 import kusitms.candoit.MoramMoramServer.domain.user.Repository.UserRepository;
@@ -84,5 +86,37 @@ public class TipBoardController {
     public BaseResponse<TipBoardDTO> getOne(@PathVariable("postId") Long tipBoardId) throws Exception{
         TipBoardDTO tipBoard = tipBoardService.readOne(tipBoardId);
         return new BaseResponse<>(tipBoard);
+    }
+
+    @GetMapping(
+            value = "/tips/list")
+    public BaseResponse<Object> getList(@RequestParam(value="page", defaultValue="0") int page) throws Exception {
+        Object tipBoardLists = tipBoardService.getBoard(page);
+
+        return new BaseResponse<>(tipBoardLists);
+    }
+
+    //좋아요
+    @PostMapping(value = "/tips/{postId}/like")
+    public BaseResponse<Long> like(@PathVariable("postId")Long postId){
+        Long id = getTokenInfo().getId();
+        String name = getTokenInfo().getName();
+
+        TipBoardLikeDTO tipBoardLikeDTO = TipBoardLikeDTO.builder()
+                .userId(id)
+                .name(name)
+                .build();
+
+        log.info("성공1");
+        Long likeId = tipBoardService.like(postId, tipBoardLikeDTO);
+        return new BaseResponse<>(likeId);
+    }
+
+    @GetMapping(
+            value = "/tips/top-posts" )
+    public BaseResponse<Object>  getTopPosts() throws Exception {
+        Object topPosts = tipBoardService.getTopPosts();
+
+        return new BaseResponse<>(topPosts);
     }
 }
