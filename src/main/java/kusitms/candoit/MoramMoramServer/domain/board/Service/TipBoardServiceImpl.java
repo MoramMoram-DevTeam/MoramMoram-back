@@ -126,4 +126,14 @@ public class TipBoardServiceImpl implements TipBoardService {
         return likeId;
     }
 
+    @Override
+    public List<TipBoardDTO> getTopPosts() {
+        List<TipBoard> result = tipBoardRepository.findTop();
+
+        List<TipBoardDTO> topBoard = result.stream()
+                .map(m-> modelMapper.map(m, TipBoardDTO.class))
+                .collect(Collectors.toList());
+        return topBoard;
+    }
+
 }

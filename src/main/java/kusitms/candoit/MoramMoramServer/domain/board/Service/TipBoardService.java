@@ -22,4 +22,6 @@ public interface TipBoardService {
     List<TipBoardDTO> getBoard(int page);
 
     Long like(Long tipBoardId, TipBoardLikeDTO tipBoardLikeDTO);
+
+    List<TipBoardDTO> getTopPosts();
 }

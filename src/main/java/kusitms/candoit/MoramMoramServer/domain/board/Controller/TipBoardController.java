@@ -111,4 +111,12 @@ public class TipBoardController {
         Long likeId = tipBoardService.like(postId, tipBoardLikeDTO);
         return new BaseResponse<>(likeId);
     }
+
+    @GetMapping(
+            value = "/tips/top-posts" )
+    public BaseResponse<Object>  getTopPosts() throws Exception {
+        Object topPosts = tipBoardService.getTopPosts();
+
+        return new BaseResponse<>(topPosts);
+    }
 }
