@@ -39,7 +39,7 @@ public class QuestionBoardDTO {
 
     private Integer likeCnt;
 
-    private Integer commentCnt;
+    private Integer replyCnt;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime boardDate;
