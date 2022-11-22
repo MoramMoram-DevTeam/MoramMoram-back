@@ -1,7 +1,9 @@
 package kusitms.candoit.MoramMoramServer.domain.board.Controller;
 
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.QuestionBoardDTO;
+import kusitms.candoit.MoramMoramServer.domain.board.Dto.QuestionBoardLikeDTO;
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.TipBoardDTO;
+import kusitms.candoit.MoramMoramServer.domain.board.Dto.TipBoardLikeDTO;
 import kusitms.candoit.MoramMoramServer.domain.board.Service.TipBoardService;
 import kusitms.candoit.MoramMoramServer.domain.user.Dto.TokenInfoResponseDto;
 import kusitms.candoit.MoramMoramServer.domain.user.Repository.UserRepository;
@@ -92,5 +94,21 @@ public class TipBoardController {
         Object tipBoardLists = tipBoardService.getBoard(page);
 
         return new BaseResponse<>(tipBoardLists);
+    }
+
+    //좋아요
+    @PostMapping(value = "/tips/{postId}/like")
+    public BaseResponse<Long> like(@PathVariable("postId")Long postId){
+        Long id = getTokenInfo().getId();
+        String name = getTokenInfo().getName();
+
+        TipBoardLikeDTO tipBoardLikeDTO = TipBoardLikeDTO.builder()
+                .userId(id)
+                .name(name)
+                .build();
+
+        log.info("성공1");
+        Long likeId = tipBoardService.like(postId, tipBoardLikeDTO);
+        return new BaseResponse<>(likeId);
     }
 }
