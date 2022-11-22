@@ -35,24 +35,9 @@ public class ApplicationService {
 
     @Transactional
     public Application newApplication(ApplicationDto applicationDto){
-        boolean test = applicationDto.isCategory1();
-        log.info("------카테고리 테스트(set before): " + String.valueOf(test));
 
         Application app = applicationDto.toEntity();
-
         app.setUserId(getTokenInfo().getId());
-
-        log.info("------카테고리 테스트(set after): " + String.valueOf(test));
-
-
-
-//        app.setCategory(categoryDto.toEntity());
-//        app.setUserId(getTokenInfo().getId());
-
-//        Category category = categoryDto.toEntity();
-//        category.setUserId(getTokenInfo().getId());
-
-//        app.setCategory(category);
 
         // 이미지 처리 필요
 

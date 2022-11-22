@@ -24,8 +24,15 @@ public class SubCategory {
 
     @NotNull
     @Column(name = "user_id")
-    @Size(min = 1, max = 255)
     private Long userId;
+
+    @NotNull
+    @Column(name = "board_type")
+    private String boardType;
+
+    @NotNull
+    @Column(name = "board_id")
+    private Long boardId;
 
     @Column(name="sub_category1")
     private String subCategory1;

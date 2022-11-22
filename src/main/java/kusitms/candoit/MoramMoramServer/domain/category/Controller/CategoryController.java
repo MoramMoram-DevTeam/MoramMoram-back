@@ -20,12 +20,6 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    // 카테고리 생성
-//    @PostMapping("")
-//    public ResponseEntity<?> newCategory(ApplicationDto applicationDto){
-//        Category category = categoryService.newCategory(applicationDto);
-//    }
-
     // 카테고리 조회
     @GetMapping("/category")
     public ResponseEntity<?> getCategory(String type, Long b_id){

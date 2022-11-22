@@ -54,9 +54,20 @@ public class Application {
 
 
 //    서브 카테고리 (사용자가 직접 입력)
-    @JoinColumn
-    @OneToOne
-    private SubCategory subCategory;
+//    @JoinColumn
+//    @OneToOne
+//    private SubCategory subCategory;
+    private Long subCategoryId;
+    @Column(name="sub_category1")
+    private String subCategory1;
+    @Column(name="sub_category2")
+    private String subCategory2;
+    @Column(name="sub_category3")
+    private String subCategory3;
+    @Column(name="sub_category4")
+    private String subCategory4;
+    @Column(name="sub_category5")
+    private String subCategory5;
 
     @NotNull
     @Column(name = "market_exp")

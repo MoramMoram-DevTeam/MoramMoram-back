@@ -2,7 +2,8 @@ package kusitms.candoit.MoramMoramServer.domain.category.Service;
 
 import kusitms.candoit.MoramMoramServer.domain.application.Entity.Application;
 import kusitms.candoit.MoramMoramServer.domain.category.Entity.Category;
-import kusitms.candoit.MoramMoramServer.domain.category.Repository.CategoryRepository;
+import kusitms.candoit.MoramMoramServer.domain.category.Entity.SubCategory;
+import kusitms.candoit.MoramMoramServer.domain.category.Repository.SubCategoryRepository;
 import kusitms.candoit.MoramMoramServer.domain.user.Dto.TokenInfoResponseDto;
 import kusitms.candoit.MoramMoramServer.domain.user.Repository.UserRepository;
 import kusitms.candoit.MoramMoramServer.global.config.Jwt.SecurityUtil;
@@ -16,9 +17,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class CategoryService {
+public class SubCategoryService {
 
-    private final CategoryRepository categoryRepository;
+    private final SubCategoryRepository subCategoryRepository;
     private final UserRepository userRepository;
 
     private TokenInfoResponseDto getTokenInfo() {
@@ -31,25 +32,27 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category newCategory(Application application){
-        Category category = new Category();
+    public SubCategory newSubCategory(Application application){
+        SubCategory subCategory = new SubCategory();
 
-        category.setCraft1(application.isCategory1());
-        category.setCraft2(application.isCategory2());
-        category.setCraft3(application.isCategory3());
-        category.setCraft4(application.isCategory4());
+        subCategory.setSubCategory1(application.getSubCategory1());
+        subCategory.setSubCategory2(application.getSubCategory2());
+        subCategory.setSubCategory3(application.getSubCategory3());
+        subCategory.setSubCategory4(application.getSubCategory4());
+        subCategory.setSubCategory5(application.getSubCategory5());
 
-        category.setBoardType("Application");
-        category.setBoardId(application.getApplicationId());
-        category.setUserId(application.getUserId());
+        subCategory.setBoardType("Application");
+        subCategory.setBoardId(application.getApplicationId());
+        subCategory.setUserId(application.getUserId());
 
-        return categoryRepository.save(category);
+        return subCategoryRepository.save(subCategory);
     }
 
     @Transactional
-    public Category getCategory(String type, Long b_id){
+    public SubCategory getSubCategory(String type, Long b_id){
         Long userId = getTokenInfo().getId();
-        Category category = categoryRepository.findCategoryByUserIdAndBoardTypeAndBoardId(userId, type, b_id);
-        return category;
+        SubCategory subCategory = subCategoryRepository.findSubCategoryByUserIdAndBoardTypeAndBoardId(userId, type, b_id);
+        return subCategory;
     }
+
 }

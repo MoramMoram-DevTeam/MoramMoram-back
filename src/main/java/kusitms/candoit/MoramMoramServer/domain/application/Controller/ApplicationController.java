@@ -5,7 +5,9 @@ import kusitms.candoit.MoramMoramServer.domain.application.Entity.Application;
 import kusitms.candoit.MoramMoramServer.domain.category.Controller.CategoryController;
 import kusitms.candoit.MoramMoramServer.domain.category.Entity.Category;
 import kusitms.candoit.MoramMoramServer.domain.application.Service.ApplicationService;
+import kusitms.candoit.MoramMoramServer.domain.category.Entity.SubCategory;
 import kusitms.candoit.MoramMoramServer.domain.category.Service.CategoryService;
+import kusitms.candoit.MoramMoramServer.domain.category.Service.SubCategoryService;
 import kusitms.candoit.MoramMoramServer.global.config.Response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ public class ApplicationController {
 
     private final ApplicationService applicationService;
     private final CategoryService categoryService;
+    private final SubCategoryService subCategoryService;
 
     // 신청서 작성하기
     @PostMapping("/new")
@@ -30,7 +33,10 @@ public class ApplicationController {
         Application applicationEntity = applicationService.newApplication(reqBody);
 
         Category c = categoryService.newCategory(applicationEntity);
+        SubCategory s = subCategoryService.newSubCategory(applicationEntity);
+
         applicationEntity.setCategoryId(c.getCategoryId());
+        applicationEntity.setSubCategoryId(s.getSubCategoryId());
 
         return new ResponseEntity<>(applicationEntity, HttpStatus.CREATED);
     }

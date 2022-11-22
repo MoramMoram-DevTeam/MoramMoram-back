@@ -24,6 +24,13 @@ public class ApplicationDto {
     private boolean category3;
     private boolean category4;
 
+
+    private String subCategory1;
+    private String subCategory2;
+    private String subCategory3;
+    private String subCategory4;
+    private String subCategory5;
+
     private Integer marketExp;
     private boolean onlineExp;
 
@@ -46,6 +53,11 @@ public class ApplicationDto {
                 .category2(category2)
                 .category3(category3)
                 .category4(category4)
+                .subCategory1(subCategory1)
+                .subCategory2(subCategory2)
+                .subCategory3(subCategory3)
+                .subCategory4(subCategory4)
+                .subCategory5(subCategory5)
                 .marketExp(marketExp)
                 .onlineExp(onlineExp)
                 .certificateImg(certificateImg)
