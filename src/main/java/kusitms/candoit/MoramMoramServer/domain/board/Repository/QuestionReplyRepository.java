@@ -11,6 +11,4 @@ public interface QuestionReplyRepository extends JpaRepository<QuestionReply, Lo
     @Query("select r from QuestionReply r where r.questionBoard.questionBoardId = :id")
     Page<QuestionReply> listOfBoard(Long id, Pageable pageable);
 
-//    @Query(value = "")
-//    void deleteAllBy(int questionBoardId);
 }
