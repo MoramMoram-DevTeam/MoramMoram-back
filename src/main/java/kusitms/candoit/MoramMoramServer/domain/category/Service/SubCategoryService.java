@@ -32,6 +32,22 @@ public class SubCategoryService {
     }
 
     @Transactional
+    public SubCategory editSubCategory(Application application){
+
+        SubCategory subCategory = subCategoryRepository.findBySubCategoryId(application.getCategoryId());
+
+        subCategory.setSubCategory1(application.getSubCategory1());
+        subCategory.setSubCategory2(application.getSubCategory2());
+        subCategory.setSubCategory3(application.getSubCategory3());
+        subCategory.setSubCategory4(application.getSubCategory4());
+        subCategory.setSubCategory5(application.getSubCategory5());
+
+        return subCategoryRepository.save(subCategory);
+
+    }
+
+
+    @Transactional
     public SubCategory newSubCategory(Application application){
         SubCategory subCategory = new SubCategory();
 

@@ -1,6 +1,7 @@
 package kusitms.candoit.MoramMoramServer.domain.application.Entity;
 
 import kusitms.candoit.MoramMoramServer.domain.category.Entity.SubCategory;
+import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Fleamarket;
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -25,6 +26,10 @@ public class Application {
     private Long applicationId;
 
     @NotNull
+    @Column(name = "market_id")
+    private Long marketId;
+
+    @NotNull
     @Column(name = "user_id")
     @Range(min = 1, max = 255)
     private Long userId;
@@ -39,9 +44,7 @@ public class Application {
     @Column(name = "return_address")
     private String returnAddress;
 
-//    카테고리 (주어진 테이블 내에서 선택)
-//    @JoinColumn
-//    @OneToOne
+    //    카테고리
     private Long categoryId;
     @Column(columnDefinition = "boolean default false")
     private boolean category1;
@@ -53,10 +56,7 @@ public class Application {
     private boolean category4;
 
 
-//    서브 카테고리 (사용자가 직접 입력)
-//    @JoinColumn
-//    @OneToOne
-//    private SubCategory subCategory;
+    //    서브 카테고리 (사용자가 직접 입력)
     private Long subCategoryId;
     @Column(name="sub_category1")
     private String subCategory1;
@@ -77,12 +77,12 @@ public class Application {
     @Column(name = "online_exp")
     private boolean onlineExp;
 
-//    보유 집기 (주어진 테이블 내에서 선택)
+    //    보유 집기 (주어진 테이블 내에서 선택)
     @JoinColumn
     @OneToOne
     private Utensil utensil;
 
-//    플리마켓 경험 사진 첨부
+    //    플리마켓 경험 사진 첨부
     @Column(name = "certificate_img", columnDefinition = "TEXT")
     private String certificateImg;
 
@@ -90,7 +90,7 @@ public class Application {
     @Column(name = "price_avg")
     private String priceAvg;
 
-//    상품 사진 첨부 (여러 개 가능하도록)
+    //    상품 사진 첨부 (여러 개 가능하도록)
     @Column(name = "item_img", columnDefinition = "TEXT")
     private String itemImg;
 
@@ -103,6 +103,9 @@ public class Application {
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
 
+    // WAITING: 승인 대기 중, APPROVED: 승인 완료, REJECTED: 승인 거절
+    @Column(columnDefinition = "varchar(50) default 'WAITING'")
+    private String status;
 
 
     @PrePersist // DB에 insert 되기 직전에 실행

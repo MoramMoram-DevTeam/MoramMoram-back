@@ -47,6 +47,20 @@ public class CategoryService {
     }
 
     @Transactional
+    public Category editCategory(Application application){
+
+        Category category = categoryRepository.findByCategoryId(application.getCategoryId());
+
+        category.setCraft1(application.isCategory1());
+        category.setCraft2(application.isCategory2());
+        category.setCraft3(application.isCategory3());
+        category.setCraft4(application.isCategory4());
+
+        return categoryRepository.save(category);
+
+    }
+
+    @Transactional
     public Category getCategory(String type, Long b_id){
         Long userId = getTokenInfo().getId();
         Category category = categoryRepository.findCategoryByUserIdAndBoardTypeAndBoardId(userId, type, b_id);
