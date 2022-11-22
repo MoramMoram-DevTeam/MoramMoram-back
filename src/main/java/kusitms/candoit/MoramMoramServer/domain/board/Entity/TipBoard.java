@@ -79,5 +79,7 @@ public class TipBoard extends BaseEntity {
     public void updateViewCnt(){this.viewCnt++;}
 
     public void updateReplyCnt(){this.replyCnt++;}
+
+    public void updateStatus(){this.status = "DELETED";}
 }
 

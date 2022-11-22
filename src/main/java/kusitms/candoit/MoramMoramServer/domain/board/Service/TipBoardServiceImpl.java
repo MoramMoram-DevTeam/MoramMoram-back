@@ -54,4 +54,13 @@ public class TipBoardServiceImpl implements TipBoardService {
         });
     }
 
+    @Override
+    public void deleteOne(Long tipBoardId) {
+        Optional<TipBoard> result = tipBoardRepository.findById(tipBoardId);
+        TipBoard board = result.orElseThrow();
+
+        board.updateStatus();
+        tipBoardRepository.save(board);
+    }
+
 }

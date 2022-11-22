@@ -61,10 +61,19 @@ public class TipBoardController {
         return new BaseResponse<>(questionBoardId);
     }
 
+    //게시글 수정
     @PatchMapping(value = "/tips/{postId}")
     public BaseResponse<String> modifyOne(@PathVariable("postId")Long tipBoardId, @RequestBody TipBoardDTO boardDTO){
         tipBoardService.modify( tipBoardId,boardDTO);
 
         return new BaseResponse<>("내용 수정했습니다.");
+    }
+
+    //게시글 삭제 : status를 deleted로
+    @PatchMapping(value = "/tips/{postId}/status/deleted")
+    public BaseResponse<String> deleteOne(@PathVariable("postId")Long tipBoardId ){
+        tipBoardService.deleteOne(tipBoardId);
+
+        return new BaseResponse<>("삭제했습니다.");
     }
 }
