@@ -46,6 +46,16 @@ public class Category {
     private boolean craft4;
     @Column(columnDefinition = "boolean default false")
     private boolean craft5;
+    @Column(columnDefinition = "boolean default false")
+    private boolean craft6;
+    @Column(columnDefinition = "boolean default false")
+    private boolean craft7;
+    @Column(columnDefinition = "boolean default false")
+    private boolean craft8;
+    @Column(columnDefinition = "boolean default false")
+    private boolean craft9;
+    @Column(columnDefinition = "boolean default false")
+    private boolean craft10;
 
     @Column(name="created_at")
     private LocalDateTime createdAt;

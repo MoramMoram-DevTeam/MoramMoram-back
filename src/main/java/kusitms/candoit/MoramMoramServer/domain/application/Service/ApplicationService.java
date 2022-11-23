@@ -1,8 +1,10 @@
 package kusitms.candoit.MoramMoramServer.domain.application.Service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
 import kusitms.candoit.MoramMoramServer.domain.application.Dto.ApplicationDto;
 import kusitms.candoit.MoramMoramServer.domain.application.Entity.Application;
 import kusitms.candoit.MoramMoramServer.domain.application.Repository.ApplicationRepository;
+import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Dto.FleamarketDto;
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Fleamarket;
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Repository.FleamarketRepository;
 import kusitms.candoit.MoramMoramServer.domain.user.Dto.TokenInfoResponseDto;
@@ -12,9 +14,13 @@ import kusitms.candoit.MoramMoramServer.global.Exception.CustomException;
 import kusitms.candoit.MoramMoramServer.global.config.Jwt.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,6 +32,9 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
     private final FleamarketRepository fleamarketRepository;
+    private final AmazonS3Client amazonS3Client;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     private TokenInfoResponseDto getTokenInfo() {
         return TokenInfoResponseDto.Response(
@@ -75,6 +84,12 @@ public class ApplicationService {
         app.setCategory2(appDto.isCategory2());
         app.setCategory3(appDto.isCategory3());
         app.setCategory4(appDto.isCategory4());
+        app.setCategory5(appDto.isCategory5());
+        app.setCategory6(appDto.isCategory6());
+        app.setCategory7(appDto.isCategory7());
+        app.setCategory8(appDto.isCategory8());
+        app.setCategory9(appDto.isCategory9());
+        app.setCategory10(appDto.isCategory10());
 
         app.setSubCategory1(appDto.getSubCategory1());
         app.setSubCategory2(appDto.getSubCategory2());

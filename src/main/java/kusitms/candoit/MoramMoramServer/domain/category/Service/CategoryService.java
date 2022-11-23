@@ -38,6 +38,12 @@ public class CategoryService {
         category.setCraft2(application.isCategory2());
         category.setCraft3(application.isCategory3());
         category.setCraft4(application.isCategory4());
+        category.setCraft5(application.isCategory5());
+        category.setCraft6(application.isCategory6());
+        category.setCraft7(application.isCategory7());
+        category.setCraft8(application.isCategory8());
+        category.setCraft9(application.isCategory9());
+        category.setCraft10(application.isCategory10());
 
         category.setBoardType("Application");
         category.setBoardId(application.getApplicationId());
@@ -55,6 +61,7 @@ public class CategoryService {
         category.setCraft2(application.isCategory2());
         category.setCraft3(application.isCategory3());
         category.setCraft4(application.isCategory4());
+        category.setCraft5(application.isCategory5());
 
         return categoryRepository.save(category);
 
