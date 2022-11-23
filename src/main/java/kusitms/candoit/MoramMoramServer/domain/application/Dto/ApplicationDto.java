@@ -25,6 +25,13 @@ public class ApplicationDto {
     private boolean category2;
     private boolean category3;
     private boolean category4;
+    private boolean category5;
+    private boolean category6;
+    private boolean category7;
+    private boolean category8;
+    private boolean category9;
+    private boolean category10;
+
 
 
     private String subCategory1;
@@ -71,6 +78,12 @@ public class ApplicationDto {
                 .category2(category2)
                 .category3(category3)
                 .category4(category4)
+                .category5(category5)
+                .category6(category6)
+                .category7(category7)
+                .category8(category8)
+                .category9(category9)
+                .category10(category10)
                 .subCategory1(subCategory1)
                 .subCategory2(subCategory2)
                 .subCategory3(subCategory3)

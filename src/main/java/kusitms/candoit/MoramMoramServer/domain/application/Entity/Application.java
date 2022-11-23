@@ -54,6 +54,18 @@ public class Application {
     private boolean category3;
     @Column(columnDefinition = "boolean default false")
     private boolean category4;
+    @Column(columnDefinition = "boolean default false")
+    private boolean category5;
+    @Column(columnDefinition = "boolean default false")
+    private boolean category6;
+    @Column(columnDefinition = "boolean default false")
+    private boolean category7;
+    @Column(columnDefinition = "boolean default false")
+    private boolean category8;
+    @Column(columnDefinition = "boolean default false")
+    private boolean category9;
+    @Column(columnDefinition = "boolean default false")
+    private boolean category10;
 
 
     //    서브 카테고리 (사용자가 직접 입력)
