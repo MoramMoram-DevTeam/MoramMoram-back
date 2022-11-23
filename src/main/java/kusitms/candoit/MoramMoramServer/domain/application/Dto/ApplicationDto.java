@@ -1,21 +1,12 @@
 package kusitms.candoit.MoramMoramServer.domain.application.Dto;
 
 import kusitms.candoit.MoramMoramServer.domain.application.Entity.Application;
-import kusitms.candoit.MoramMoramServer.domain.application.Entity.Category;
-import kusitms.candoit.MoramMoramServer.domain.application.Entity.SubCategory;
-import kusitms.candoit.MoramMoramServer.domain.application.Entity.Utensil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -27,13 +18,41 @@ public class ApplicationDto {
     private String onlineChannel;
     private String returnAddress;
 
-    private Category category;
-    private SubCategory subCategory;
+//    private Category category;
+//    private SubCategory subCategory;
+
+    private boolean category1;
+    private boolean category2;
+    private boolean category3;
+    private boolean category4;
+
+
+    private String subCategory1;
+    private String subCategory2;
+    private String subCategory3;
+    private String subCategory4;
+    private String subCategory5;
 
     private Integer marketExp;
     private boolean onlineExp;
 
-    private Utensil utensil;
+    // 가판대
+    private boolean stall;
+    // 진열대
+    private boolean shelf;
+    // 조명
+    private boolean light;
+    // 보자기
+    private boolean wrapping;
+    // 행거
+    private boolean hanger;
+    // 마네킹
+    private boolean mannequin;
+    // 거울
+    private boolean mirror;
+    // 없음
+    private boolean none;
+
     private String certificateImg;
 
     private String priceAvg;
@@ -48,11 +67,25 @@ public class ApplicationDto {
                 .storeName(storeName)
                 .onlineChannel(onlineChannel)
                 .returnAddress(returnAddress)
-                .category(category)
-                .subCategory(subCategory)
+                .category1(category1)
+                .category2(category2)
+                .category3(category3)
+                .category4(category4)
+                .subCategory1(subCategory1)
+                .subCategory2(subCategory2)
+                .subCategory3(subCategory3)
+                .subCategory4(subCategory4)
+                .subCategory5(subCategory5)
                 .marketExp(marketExp)
                 .onlineExp(onlineExp)
-                .utensil(utensil)
+                .stall(stall)
+                .shelf(shelf)
+                .light(light)
+                .wrapping(wrapping)
+                .hanger(hanger)
+                .mannequin(mannequin)
+                .mirror(mirror)
+                .none(none)
                 .certificateImg(certificateImg)
                 .priceAvg(priceAvg)
                 .itemImg(itemImg)
