@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -143,10 +144,10 @@ public class QuestionBoardServiceImpl implements QuestionBoardService {
 
     //이미지 넣기
     public String updateImage(MultipartFile multipartFile) throws IOException {
-
+        LocalDate now = LocalDate.now();
         String uuid = UUID.randomUUID()+toString();
         String fileName = uuid+"_"+multipartFile.getOriginalFilename();
-        String question_board_image_name = "questions/" + fileName;
+        String question_board_image_name = "questions/" + now+"/"+ fileName;
         ObjectMetadata objMeta = new ObjectMetadata();
         objMeta.setContentLength(multipartFile.getInputStream().available());
         amazonS3Client.putObject(bucket, question_board_image_name, multipartFile.getInputStream(), objMeta);
