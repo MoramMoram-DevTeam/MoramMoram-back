@@ -19,6 +19,8 @@ public enum Status {
     HOST_POST_ADD_TRUE("주최글 작성 성공"),
     HOST_POST_EDIT_TRUE("주최글 수정 성공"),
     HOST_POST_DELETE_TRUE("주최글 삭제 성공"),
-    LOGOUT_TRUE("로그아웃 성공");
+    LOGOUT_TRUE("로그아웃 성공"),
+
+    QUESTIONS_IMAGE_UPLOAD_TRUE("이미지 업로드 성공");
     private final String statusMessage;
 }
