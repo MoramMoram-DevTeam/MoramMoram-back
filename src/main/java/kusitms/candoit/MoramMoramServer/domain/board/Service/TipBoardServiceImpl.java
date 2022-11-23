@@ -9,6 +9,7 @@ import kusitms.candoit.MoramMoramServer.domain.board.Entity.TipBoard;
 import kusitms.candoit.MoramMoramServer.domain.board.Entity.TipBoardLike;
 import kusitms.candoit.MoramMoramServer.domain.board.Repository.TipBoardLikeRepository;
 import kusitms.candoit.MoramMoramServer.domain.board.Repository.TipBoardRepository;
+import kusitms.candoit.MoramMoramServer.domain.board.Repository.TipReplyRepository;
 import kusitms.candoit.MoramMoramServer.global.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,8 @@ public class TipBoardServiceImpl implements TipBoardService {
     private final ModelMapper modelMapper;
 
     private final TipBoardRepository tipBoardRepository;
+
+    private final TipReplyRepository tipReplyRepository;
 
     private final TipBoardLikeRepository tipBoardLikeRepository;
 
@@ -134,6 +137,11 @@ public class TipBoardServiceImpl implements TipBoardService {
                 .map(m-> modelMapper.map(m, TipBoardDTO.class))
                 .collect(Collectors.toList());
         return topBoard;
+    }
+
+    @Override
+    public void deleteReplies(Long tipBoardId) {
+        tipReplyRepository.deleteAllByTipBoard(tipBoardId);
     }
 
 }

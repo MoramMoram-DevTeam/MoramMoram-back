@@ -74,7 +74,11 @@ public class TipBoardController {
     //게시글 삭제 : status를 deleted로
     @PatchMapping(value = "/tips/{postId}/status/deleted")
     public BaseResponse<String> deleteOne(@PathVariable("postId")Long tipBoardId ){
+        log.info("===정보 게시글 1번 삭제====");
         tipBoardService.deleteOne(tipBoardId);
+        //연관 댓글들도 모두 삭제
+        log.info("연관 댓글들 모두 삭제");
+        tipBoardService.deleteReplies(tipBoardId);
 
         return new BaseResponse<>("삭제했습니다.");
     }
