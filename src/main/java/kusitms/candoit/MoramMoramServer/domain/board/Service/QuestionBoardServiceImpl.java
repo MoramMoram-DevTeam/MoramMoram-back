@@ -144,6 +144,7 @@ public class QuestionBoardServiceImpl implements QuestionBoardService {
 
     //이미지 넣기
     public String updateImage(MultipartFile multipartFile) throws IOException {
+        //이미지 업로드
         LocalDate now = LocalDate.now();
         String uuid = UUID.randomUUID()+toString();
         String fileName = uuid+"_"+multipartFile.getOriginalFilename();
