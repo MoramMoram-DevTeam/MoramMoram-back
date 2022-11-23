@@ -9,7 +9,7 @@ public interface TipReplyService {
 
     Long register(TipReplyDTO tipReplyDTO);
 
-    //void remove(Long replyId);
+    void remove(Long replyId);
 
-    //List<QuestionReplyDTO> getReplyList(int page, Long questionBoardId);
+    List<TipReplyDTO> getReplyList(int page, Long postId);
 }

@@ -15,8 +15,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Objects;
 
 import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.NOT_SOCIAL_LOGIN;
@@ -41,24 +43,26 @@ public class TipBoardController {
         );
     }
     //생성
-    @PostMapping(value = "/tips",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public BaseResponse<Long> registerPost(@RequestBody @Valid TipBoardDTO boardDTO) {
-
+    @PostMapping(value = "/tips")
+    public BaseResponse<Long> registerPost(
+            @RequestPart(value = "data") TipBoardDTO boardDTO,
+            @RequestPart(value="file", required = false) MultipartFile multipartFile)throws IOException
+    {
+        String img =null;
+        if(multipartFile != null && !multipartFile.isEmpty()){
+            log.info("실행 되나요??");
+            img = tipBoardService.updateImage(multipartFile);
+        }
         Long id = getTokenInfo().getId();
         String name = getTokenInfo().getName();
-        log.info("1번");
+
         //seller인지 아닌지 체크
         if(userService.checkSeller(id)==false) {
-            log.info("3번");
             throw new CustomException(NO_AUTHORITY);
         }
-        log.info("4번");
         boardDTO.setUserId(id);
         boardDTO.setName(name);
-        Long questionBoardId = tipBoardService.register(boardDTO);
+        Long questionBoardId = tipBoardService.register(boardDTO, img);
 
         return new BaseResponse<>(questionBoardId);
     }
@@ -74,7 +78,11 @@ public class TipBoardController {
     //게시글 삭제 : status를 deleted로
     @PatchMapping(value = "/tips/{postId}/status/deleted")
     public BaseResponse<String> deleteOne(@PathVariable("postId")Long tipBoardId ){
+        log.info("===정보 게시글 1번 삭제====");
         tipBoardService.deleteOne(tipBoardId);
+        //연관 댓글들도 모두 삭제
+        log.info("연관 댓글들 모두 삭제");
+        tipBoardService.deleteReplies(tipBoardId);
 
         return new BaseResponse<>("삭제했습니다.");
     }

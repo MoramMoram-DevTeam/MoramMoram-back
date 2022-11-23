@@ -16,10 +16,7 @@ import kusitms.candoit.MoramMoramServer.global.config.Response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -61,6 +58,24 @@ public class TipReplyController {
         Long tipReplyId = tipReplyService.register(tipReplyDTO);
 
         return new BaseResponse<>(tipReplyId);
+    }
+
+
+    //댓글 삭제
+    @DeleteMapping(value="/tips/replies/{replyId}")
+    public BaseResponse<String> remove(
+            @PathVariable("replyId") Long replyId) {
+
+        tipReplyService.remove(replyId);
+
+        return new BaseResponse<>("댓글 삭제했습니다.");
+    }
+
+    @GetMapping(
+            value = "/tips/{postId}/replylist")
+    public Object getList(@PathVariable("postId") Long postId, @RequestParam(value="page", defaultValue="0") int page) throws Exception {
+
+        return tipReplyService.getReplyList(page, postId);
     }
 
 }

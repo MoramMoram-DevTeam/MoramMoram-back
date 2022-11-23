@@ -1,5 +1,7 @@
 package kusitms.candoit.MoramMoramServer.domain.board.Service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.QuestionBoardDTO;
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.TipBoardDTO;
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.TipBoardLikeDTO;
@@ -9,18 +11,24 @@ import kusitms.candoit.MoramMoramServer.domain.board.Entity.TipBoard;
 import kusitms.candoit.MoramMoramServer.domain.board.Entity.TipBoardLike;
 import kusitms.candoit.MoramMoramServer.domain.board.Repository.TipBoardLikeRepository;
 import kusitms.candoit.MoramMoramServer.domain.board.Repository.TipBoardRepository;
+import kusitms.candoit.MoramMoramServer.domain.board.Repository.TipReplyRepository;
 import kusitms.candoit.MoramMoramServer.global.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.NO_AUTHORITY;
@@ -36,11 +44,20 @@ public class TipBoardServiceImpl implements TipBoardService {
 
     private final TipBoardRepository tipBoardRepository;
 
+    private final TipReplyRepository tipReplyRepository;
+
     private final TipBoardLikeRepository tipBoardLikeRepository;
 
+    private final AmazonS3Client amazonS3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
     @Override
-    public Long register(TipBoardDTO tipBoardDTO) {
+    public Long register(TipBoardDTO tipBoardDTO,String img) {
+
         TipBoard board = modelMapper.map(tipBoardDTO, TipBoard.class);
+        board.setImg(img);
         Long tipBoardId = tipBoardRepository.save(board).getTipBoardId();
 
         return tipBoardId;
@@ -134,6 +151,28 @@ public class TipBoardServiceImpl implements TipBoardService {
                 .map(m-> modelMapper.map(m, TipBoardDTO.class))
                 .collect(Collectors.toList());
         return topBoard;
+    }
+
+    @Override
+    public void deleteReplies(Long tipBoardId) {
+        tipReplyRepository.deleteAllByTipBoard(tipBoardId);
+    }
+
+    public String updateImage(MultipartFile multipartFile) throws IOException {
+        LocalDate now = LocalDate.now();
+        String uuid = UUID.randomUUID()+toString();
+        String fileName = uuid+"_"+multipartFile.getOriginalFilename();
+        String question_board_image_name = "tips/" + now+"/"+fileName;
+        ObjectMetadata objMeta = new ObjectMetadata();
+        objMeta.setContentLength(multipartFile.getInputStream().available());
+        amazonS3Client.putObject(bucket, question_board_image_name, multipartFile.getInputStream(), objMeta);
+
+        String img = amazonS3Client.getUrl(bucket, fileName).toString();
+        //Optional<QuestionBoard> result = questionBoardRepository.findById(questionBoardId);
+        //QuestionBoard board = result.orElseThrow();
+        //board.setImg(img);
+
+        return img;
     }
 
 }

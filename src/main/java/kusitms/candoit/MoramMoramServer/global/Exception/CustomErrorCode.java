@@ -45,7 +45,6 @@ public enum CustomErrorCode {
 
     //게시판
     POST_NO_EXIST("존재하지 않는 게시글입니다.");
-
     private final String statusMessage;
 
 }
