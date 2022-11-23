@@ -140,4 +140,24 @@ public class ApplicationService {
         return applicationList;
     }
 
+    public Application approveApplication(Long applicationId){
+        Application application = applicationRepository.findApplicationByApplicationId(applicationId);
+        application.setStatus("APPROVED");
+        applicationRepository.save(application);
+        return application;
+    }
+
+    public Application rejectApplication(Long applicationId){
+        Application application = applicationRepository.findApplicationByApplicationId(applicationId);
+        application.setStatus("REJECTED");
+        applicationRepository.save(application);
+        return application;
+    }
+
+    public List<Application> approvedApps(Long m_id){
+        String status = "APPROVED";
+        List<Application> applicationList = applicationRepository.findAllByMarketIdAndStatus(m_id, status);
+        return applicationList;
+    }
+
 }

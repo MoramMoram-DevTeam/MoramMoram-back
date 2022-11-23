@@ -41,6 +41,8 @@ public class ApplicationController {
 
         applicationEntity.setCategoryId(c.getCategoryId());
         applicationEntity.setSubCategoryId(s.getSubCategoryId());
+        applicationEntity.setStatus("WAITING");
+
         applicationRepository.save(applicationEntity);
 
         return new ResponseEntity<>(applicationEntity, HttpStatus.CREATED);
@@ -83,4 +85,24 @@ public class ApplicationController {
         return new ResponseEntity<>(applicationList, HttpStatus.OK);
     }
 
+    // 신청 승인하기
+    @PostMapping("/approved/{applicationId}")
+    public BaseResponse<?> approveApplication(@PathVariable Long applicationId){
+        applicationService.approveApplication(applicationId);
+        return new BaseResponse<>(applicationId);
+    }
+    // 신청 거절하기
+    @PostMapping("/rejected/{applicationId}")
+    public BaseResponse<?> rejectApplication(@PathVariable Long applicationId){
+        applicationService.rejectApplication(applicationId);
+        return new BaseResponse<>(applicationId);
+    }
+    // 마켓별 승인된 신청서
+    @GetMapping("/approved-markets")
+    public ResponseEntity<?> approvedApplication(Long m_id){
+        log.info("----실행은 되나요: " + m_id);
+        List<Application> applicationList = applicationService.approvedApps(m_id);
+        log.info("----service는 도나요: " + applicationList.get(0).getApplicationId());
+        return new ResponseEntity<>(applicationList, HttpStatus.OK);
+    }
 }
