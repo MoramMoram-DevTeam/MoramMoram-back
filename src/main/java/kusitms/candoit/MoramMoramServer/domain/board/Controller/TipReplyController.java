@@ -70,4 +70,12 @@ public class TipReplyController {
 
         return new BaseResponse<>("댓글 삭제했습니다.");
     }
+
+    @GetMapping(
+            value = "/tips/{postId}/replylist")
+    public Object getList(@PathVariable("postId") Long postId, @RequestParam(value="page", defaultValue="0") int page) throws Exception {
+
+        return tipReplyService.getReplyList(page, postId);
+    }
+
 }
