@@ -24,4 +24,6 @@ public interface TipBoardService {
     Long like(Long tipBoardId, TipBoardLikeDTO tipBoardLikeDTO);
 
     List<TipBoardDTO> getTopPosts();
+
+    void deleteReplies(Long tipBoardId);
 }

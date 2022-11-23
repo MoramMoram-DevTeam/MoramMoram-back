@@ -35,4 +35,11 @@ public class TipReplyImpl implements TipReplyService {
 
         return id;
     }
+
+    @Override
+    public void remove(Long replyId) {
+
+        tipReplyRepository.deleteById(replyId);
+    }
+
 }
