@@ -154,9 +154,6 @@ public class QuestionBoardServiceImpl implements QuestionBoardService {
         amazonS3Client.putObject(bucket, question_board_image_name, multipartFile.getInputStream(), objMeta);
 
         String img = amazonS3Client.getUrl(bucket, fileName).toString();
-        //Optional<QuestionBoard> result = questionBoardRepository.findById(questionBoardId);
-        //QuestionBoard board = result.orElseThrow();
-        //board.setImg(img);
 
         return img;
     }
