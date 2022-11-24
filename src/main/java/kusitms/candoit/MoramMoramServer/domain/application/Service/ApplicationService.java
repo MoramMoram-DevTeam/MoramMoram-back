@@ -1,6 +1,7 @@
 package kusitms.candoit.MoramMoramServer.domain.application.Service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import kusitms.candoit.MoramMoramServer.domain.application.Dto.ApplicationDto;
 import kusitms.candoit.MoramMoramServer.domain.application.Entity.Application;
 import kusitms.candoit.MoramMoramServer.domain.application.Repository.ApplicationRepository;
@@ -18,11 +19,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -46,7 +51,7 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application newApplication(Long m_id, ApplicationDto applicationDto){
+    public Application newApplication(Long m_id, ApplicationDto applicationDto, String img1, String img2) {
 
         Fleamarket fleamarket = fleamarketRepository.findById(m_id).orElseThrow(() -> {
             throw new CustomException(CustomErrorCode.POST_NOT_FOUND);
@@ -56,14 +61,15 @@ public class ApplicationService {
         app.setUserId(getTokenInfo().getId());
         app.setMarketId(fleamarket.getId());
 
-        // 이미지 처리 필요
+        app.setItemImg(img1);
+        app.setCertificateImg(img2);
 
         return applicationRepository.save(app);
     }
 
 
     @Transactional
-    public Application editApplication(Application appDto, Long appId){
+    public Application editApplication(Application appDto, Long appId, String img1, String img2){
 
         Long userId = getTokenInfo().getId();
 
@@ -113,7 +119,8 @@ public class ApplicationService {
 //        app.setUtensil(appDto.getUtensil());
 
         // 이미지 처리 필요
-//         certificateImg, itemImg
+        app.setItemImg(img1);
+        app.setCertificateImg(img2);
 
         return applicationRepository.save(app);
     }
@@ -173,6 +180,22 @@ public class ApplicationService {
         String status = "APPROVED";
         List<Application> applicationList = applicationRepository.findAllByMarketIdAndStatus(m_id, status);
         return applicationList;
+    }
+
+    //이미지 넣기
+    public String uploadImage(MultipartFile multipartFile) throws IOException {
+        //이미지 업로드
+        LocalDate now = LocalDate.now();
+        String uuid = UUID.randomUUID()+toString();
+        String fileName = uuid+"_"+multipartFile.getOriginalFilename();
+        String question_board_image_name = "applciations/" + now+"/"+ fileName;
+        ObjectMetadata objMeta = new ObjectMetadata();
+        objMeta.setContentLength(multipartFile.getInputStream().available());
+        amazonS3Client.putObject(bucket, question_board_image_name, multipartFile.getInputStream(), objMeta);
+
+        String img = amazonS3Client.getUrl(bucket, fileName).toString();
+
+        return img;
     }
 
 }

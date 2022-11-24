@@ -15,8 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -32,9 +34,22 @@ public class ApplicationController {
 
     // 신청서 작성하기
     @PostMapping("/new")
-    public ResponseEntity<?> newApplication(Long m_id, @RequestBody ApplicationDto reqBody){
+    public ResponseEntity<?> newApplication(Long m_id, @RequestPart(value="data") ApplicationDto req,
+                                            @RequestPart(value="itemImg") MultipartFile multipartFile,
+                                            @RequestPart(value="certificate") MultipartFile multipartFile2) throws IOException {
 
-        Application applicationEntity = applicationService.newApplication(m_id, reqBody);
+        String img1 = "";
+        String img2 = "";
+
+        if(multipartFile != null && !multipartFile.isEmpty()){
+            img1 = applicationService.uploadImage(multipartFile);
+        }
+
+        if(multipartFile2 != null && !multipartFile2.isEmpty()){
+            img2 = applicationService.uploadImage(multipartFile2);
+        }
+
+        Application applicationEntity = applicationService.newApplication(m_id, req, img1, img2);
 
         Category c = categoryService.newCategory(applicationEntity);
         SubCategory s = subCategoryService.newSubCategory(applicationEntity);
@@ -50,8 +65,22 @@ public class ApplicationController {
 
     // 신청서 수정하기
     @PatchMapping("/edit/{applicationId}")
-    public BaseResponse<?> editApplication(@RequestBody Application reqBody, @PathVariable Long applicationId){
-        Application application = applicationService.editApplication(reqBody, applicationId);
+    public BaseResponse<?> editApplication(@RequestPart(value="data") Application reqBody, @PathVariable Long applicationId,
+                                           @RequestPart(value="itemImg") MultipartFile multipartFile,
+                                           @RequestPart(value="certificate") MultipartFile multipartFile2) throws IOException {
+
+        String img1 = "";
+        String img2 = "";
+
+        if(multipartFile != null && !multipartFile.isEmpty()){
+            img1 = applicationService.uploadImage(multipartFile);
+        }
+
+        if(multipartFile2 != null && !multipartFile2.isEmpty()){
+            img2 = applicationService.uploadImage(multipartFile2);
+        }
+
+        Application application = applicationService.editApplication(reqBody, applicationId, img1, img2);
         categoryService.editCategory(application);
 //        subCategoryService.editSubCategory(application);
         return new BaseResponse<>(applicationId);
@@ -105,4 +134,6 @@ public class ApplicationController {
         log.info("----service는 도나요: " + applicationList.get(0).getApplicationId());
         return new ResponseEntity<>(applicationList, HttpStatus.OK);
     }
+
+
 }
