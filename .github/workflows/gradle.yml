@@ -62,7 +62,6 @@ jobs:
           aws deploy create-deployment \
           --application-name MoramCodeDeploy \
           --deployment-group-name Moram \
-          --file-exists-behavior OVERWRITE \
           --s3-location bucket=morambucket,bundleType=zip,key=springboot-intro-build.zip \
           --region ${{ secrets.AWS_REGION }} \
           --ignore-application-stop-failures
