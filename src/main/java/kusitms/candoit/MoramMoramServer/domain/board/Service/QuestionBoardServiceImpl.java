@@ -1,23 +1,38 @@
 package kusitms.candoit.MoramMoramServer.domain.board.Service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.QuestionBoardDTO;
 import kusitms.candoit.MoramMoramServer.domain.board.Dto.QuestionBoardLikeDTO;
 import kusitms.candoit.MoramMoramServer.domain.board.Entity.QuestionBoard;
 import kusitms.candoit.MoramMoramServer.domain.board.Entity.QuestionBoardLike;
 import kusitms.candoit.MoramMoramServer.domain.board.Repository.QuestionBoardLikeRepository;
 import kusitms.candoit.MoramMoramServer.domain.board.Repository.QuestionBoardRepository;
+import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
+import kusitms.candoit.MoramMoramServer.global.Model.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static kusitms.candoit.MoramMoramServer.global.Model.Status.PROFILE_IMAGE_UPLOAD_TRUE;
+import static kusitms.candoit.MoramMoramServer.global.Model.Status.QUESTIONS_IMAGE_UPLOAD_TRUE;
 
 @Service
 @Slf4j
@@ -30,11 +45,14 @@ public class QuestionBoardServiceImpl implements QuestionBoardService {
 
     private final QuestionBoardLikeRepository questionBoardLikeRepository;
 
+    private final AmazonS3Client amazonS3Client;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
     @Override
-    public Long register(QuestionBoardDTO questionBoardDTO) {
-        log.info("여기 까지 오나요?");
-        log.info(questionBoardDTO.toString());
+    public Long register(QuestionBoardDTO questionBoardDTO, String img) {
         QuestionBoard board = modelMapper.map(questionBoardDTO, QuestionBoard.class);
+        board.setImg(img);
         Long questionBoardId = questionBoardRepository.save(board).getQuestionBoardId();
 
         return questionBoardId;
@@ -42,7 +60,7 @@ public class QuestionBoardServiceImpl implements QuestionBoardService {
 
     @Override
     public QuestionBoardDTO readOne(Long questionBoardId) {
-
+        log.info("성공2");
         Optional<QuestionBoard> result = questionBoardRepository.findById(questionBoardId);
         QuestionBoard board = result.orElseThrow();
         //조회 수 추가
@@ -110,6 +128,34 @@ public class QuestionBoardServiceImpl implements QuestionBoardService {
         log.info("성공3");
         return likeId;
 
+    }
+
+    @Override
+    public List<QuestionBoardDTO> getTopPosts() {
+       List<QuestionBoard> result = questionBoardRepository.findTop();
+       log.info("자자 여기는 들어왔나요?");
+       List<QuestionBoardDTO> topBoard = result.stream()
+                .map(m-> modelMapper.map(m, QuestionBoardDTO.class))
+                .collect(Collectors.toList());
+
+        //List<QuestionBoardDTO> resultList = result.stream().map(post -> modelMapper.map(post, PostResponseDto.class)).collect(Collectors.toList());
+        return topBoard;
+    }
+
+    //이미지 넣기
+    public String updateImage(MultipartFile multipartFile) throws IOException {
+        //이미지 업로드
+        LocalDate now = LocalDate.now();
+        String uuid = UUID.randomUUID()+toString();
+        String fileName = uuid+"_"+multipartFile.getOriginalFilename();
+        String question_board_image_name = "questions/" + now+"/"+ fileName;
+        ObjectMetadata objMeta = new ObjectMetadata();
+        objMeta.setContentLength(multipartFile.getInputStream().available());
+        amazonS3Client.putObject(bucket, question_board_image_name, multipartFile.getInputStream(), objMeta);
+
+        String img = amazonS3Client.getUrl(bucket, fileName).toString();
+
+        return img;
     }
 
 

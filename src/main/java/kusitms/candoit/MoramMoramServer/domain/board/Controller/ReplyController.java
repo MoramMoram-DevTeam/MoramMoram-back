@@ -13,11 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -70,6 +66,23 @@ public class ReplyController {
         questionReplyService.remove(replyId);
 
         return new BaseResponse<>("댓글 삭제했습니다.");
+    }
+
+//    @GetMapping(
+//            value = "/questions/{questionBoardId}/replylist" )
+//    public PageResponseDTO<QuestionReplyPagingDTO> getList(@PathVariable("questionBoardId")Long questionBoardId, PageRequestDTO pageRequestDTO) throws Exception {
+//
+//        PageResponseDTO<QuestionReplyPagingDTO> responseDTO = questionReplyService.getListOfBoard(questionBoardId,
+//                pageRequestDTO);
+//
+//        return responseDTO;
+//    }
+
+    @GetMapping(
+            value = "/questions/{questionBoardId}/replylist")
+    public Object getList(@PathVariable("questionBoardId") Long questionBoardId, @RequestParam(value="page", defaultValue="0") int page) throws Exception {
+        log.info("1번");
+        return questionReplyService.getReplyList(page, questionBoardId);
     }
 
 

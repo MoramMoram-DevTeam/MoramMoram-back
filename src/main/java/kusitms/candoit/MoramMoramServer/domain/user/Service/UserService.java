@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 
 import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.*;
 import static kusitms.candoit.MoramMoramServer.global.Model.Status.LOGOUT_TRUE;
@@ -183,5 +184,14 @@ public class UserService {
                 tokenProvider.getExpiration(atk)
         ));
         return new ResponseEntity<>(LOGOUT_TRUE, HttpStatus.OK);
+    }
+
+    //셀러인지 아닌지 체크
+    public boolean checkSeller(Long userId) {
+        log.info("2번");
+        Optional<User> result = userRepository.findSellerById(userId);
+        User user = result.orElseThrow();
+
+        return user.getSeller();
     }
 }

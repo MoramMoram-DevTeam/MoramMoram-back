@@ -59,4 +59,41 @@ public class FleamarketDto {
     public static class like{
         private Long marketId;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class hostpost_add{
+        private Long id;
+        private Long officeid;
+        private String mname;
+        private LocalDate start;
+        private LocalDate end;
+        private LocalDate deadline;
+        private String mnote;
+        private String place;
+        private String category;
+        private Boolean open;
+        private String mimg;
+        private String count;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class hostpost_edit{
+        private Long id;
+        private String mname;
+        private LocalDate start;
+        private LocalDate end;
+        private LocalDate deadline;
+        private String mnote;
+        private String place;
+        private String category;
+        private Boolean open;
+        private String mimg;
+        private String count;
+    }
 }

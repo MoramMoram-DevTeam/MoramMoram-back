@@ -41,8 +41,15 @@ dependencies {
 	// testImplementation
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 
 	implementation 'org.modelmapper:modelmapper:3.1.0'
+
+//	모니터링 시스템
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'io.micrometer:micrometer-core'
 }
 
 tasks.named('test') {
