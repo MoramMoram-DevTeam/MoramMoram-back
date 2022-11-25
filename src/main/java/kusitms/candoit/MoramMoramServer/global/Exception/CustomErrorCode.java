@@ -22,7 +22,7 @@ public enum CustomErrorCode {
     DUPLICATE_USER("해당 이메일의 가입자가 이미 존재합니다."),
     WANT_SOCIAL_REGISTER("해당 이메일은 소셜로그인으로 진행해야 합니다."),
 
-    OFFICE_ADD_OR_MAKET_ADD_IS_REQUIRED("기업 회원가입은 사업자 등록증과 플리마켓 허가증은 필수입니다."),
+    OFFICE_ADD_OR_MAKET_ADD_IS_REQUIRED("기업 회원가입은 사업자명과 사업자 등록번호는 필수입니다."),
 
     //회원탈퇴
     USER_DELETE_STATUS_FALSE( "비밀번호가 일치하지 않아 탈퇴에 실패했습니다." ),
