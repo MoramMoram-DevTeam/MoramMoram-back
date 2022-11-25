@@ -3,7 +3,6 @@ package kusitms.candoit.MoramMoramServer.domain.application.Controller;
 import kusitms.candoit.MoramMoramServer.domain.application.Dto.ApplicationDto;
 import kusitms.candoit.MoramMoramServer.domain.application.Entity.Application;
 import kusitms.candoit.MoramMoramServer.domain.application.Repository.ApplicationRepository;
-import kusitms.candoit.MoramMoramServer.domain.category.Controller.CategoryController;
 import kusitms.candoit.MoramMoramServer.domain.category.Entity.Category;
 import kusitms.candoit.MoramMoramServer.domain.application.Service.ApplicationService;
 import kusitms.candoit.MoramMoramServer.domain.category.Entity.SubCategory;
