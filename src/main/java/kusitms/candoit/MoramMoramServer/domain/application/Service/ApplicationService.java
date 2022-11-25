@@ -185,10 +185,10 @@ public class ApplicationService {
         LocalDate now = LocalDate.now();
         String uuid = UUID.randomUUID()+toString();
         String fileName = uuid+"_"+multipartFile.getOriginalFilename();
-        String question_board_image_name = "applciations/" + now+"/"+ fileName;
+        String application_image_name = "applciations/" + now+"/"+ fileName;
         ObjectMetadata objMeta = new ObjectMetadata();
         objMeta.setContentLength(multipartFile.getInputStream().available());
-        amazonS3Client.putObject(bucket, question_board_image_name, multipartFile.getInputStream(), objMeta);
+        amazonS3Client.putObject(bucket, application_image_name, multipartFile.getInputStream(), objMeta);
 
         String img = amazonS3Client.getUrl(bucket, fileName).toString();
 

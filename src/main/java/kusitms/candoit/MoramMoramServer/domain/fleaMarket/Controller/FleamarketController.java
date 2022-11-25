@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -69,9 +71,19 @@ public class FleamarketController {
     @PostMapping("markets/register")
     @PreAuthorize("hasAnyRole('OFFICE')")
     public ResponseEntity<Status> hostpost_add(
-            @RequestBody FleamarketDto.hostpost_add request
-    ) {
-        return fleamarketService.hostpost_add(request);
+            @RequestPart(value = "data") FleamarketDto.hostpost_add request,
+            @RequestPart(value="file") MultipartFile multipartFile
+    ) throws IOException {
+
+        String img = "";
+
+        if(multipartFile != null && !multipartFile.isEmpty()){
+            img = fleamarketService.uploadImage(multipartFile);
+        }
+
+//        Fleamarket fleamarket = fleamarketService.hostpost_add(request, img);
+
+        return fleamarketService.hostpost_add(request, img);
     }
 
     // 주최 글 조회
