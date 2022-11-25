@@ -176,6 +176,10 @@ public class FleamarketService {
         return new ResponseEntity<>(HOST_POST_DELETE_TRUE,HttpStatus.OK);
     }
 
+    public List<Fleamarket> recommend(){
+        return fleamarketRepository.findTop10ByOrderByViewsDesc();
+    }
+
     //이미지 넣기
     public String uploadImage(MultipartFile multipartFile) throws IOException {
         //이미지 업로드

@@ -16,4 +16,7 @@ public interface FleamarketRepository extends JpaRepository<Fleamarket, Long> {
     @Modifying
     @Query("update Fleamarket f set f.views = f.views + 1 where f.id = :id")
     int updateViewCount(Long id);
+
+    List<Fleamarket> findTop10ByOrderByViewsDesc();
+//    findTop300By OrderBy SeqDesc
 }

@@ -110,4 +110,9 @@ public class FleamarketController {
     ){
         return fleamarketService.hostpost_delete(m_id);
     }
+
+    @GetMapping("/markets/recommend")
+    public List<Fleamarket> recommend(){
+        return fleamarketService.recommend();
+    }
 }
