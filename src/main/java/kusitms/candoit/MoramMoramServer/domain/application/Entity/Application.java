@@ -1,7 +1,5 @@
 package kusitms.candoit.MoramMoramServer.domain.application.Entity;
 
-import kusitms.candoit.MoramMoramServer.domain.category.Entity.SubCategory;
-import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Fleamarket;
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -141,6 +139,10 @@ public class Application {
     // WAITING: 승인 대기 중, APPROVED: 승인 완료, REJECTED: 승인 거절
     @Column(columnDefinition = "varchar(50) default 'WAITING'")
     private String status;
+
+    // name 넘기는 용
+    @Column(name="user_name")
+    private String userName;
 
 
     @PrePersist // DB에 insert 되기 직전에 실행

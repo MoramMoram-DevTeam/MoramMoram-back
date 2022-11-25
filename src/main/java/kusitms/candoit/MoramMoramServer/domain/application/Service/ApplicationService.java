@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import kusitms.candoit.MoramMoramServer.domain.application.Dto.ApplicationDto;
 import kusitms.candoit.MoramMoramServer.domain.application.Entity.Application;
 import kusitms.candoit.MoramMoramServer.domain.application.Repository.ApplicationRepository;
-import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Dto.FleamarketDto;
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Fleamarket;
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Repository.FleamarketRepository;
 import kusitms.candoit.MoramMoramServer.domain.user.Dto.TokenInfoResponseDto;
@@ -16,15 +15,12 @@ import kusitms.candoit.MoramMoramServer.global.config.Jwt.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -59,6 +55,7 @@ public class ApplicationService {
 
         Application app = applicationDto.toEntity();
         app.setUserId(getTokenInfo().getId());
+        app.setUserName(getTokenInfo().getName());
         app.setMarketId(fleamarket.getId());
 
         app.setItemImg(img1);
@@ -188,10 +185,10 @@ public class ApplicationService {
         LocalDate now = LocalDate.now();
         String uuid = UUID.randomUUID()+toString();
         String fileName = uuid+"_"+multipartFile.getOriginalFilename();
-        String question_board_image_name = "applciations/" + now+"/"+ fileName;
+        String application_image_name = "applciations/" + now+"/"+ fileName;
         ObjectMetadata objMeta = new ObjectMetadata();
         objMeta.setContentLength(multipartFile.getInputStream().available());
-        amazonS3Client.putObject(bucket, question_board_image_name, multipartFile.getInputStream(), objMeta);
+        amazonS3Client.putObject(bucket, application_image_name, multipartFile.getInputStream(), objMeta);
 
         String img = amazonS3Client.getUrl(bucket, fileName).toString();
 
