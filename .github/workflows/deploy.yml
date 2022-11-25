@@ -1,68 +1,67 @@
-# Repo Action 페이지에 나타날 이름 
-name: Build and Deploy for MoramMoram server to AWS EC2
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-# Event Trigger
+name: Java CI with Gradle
+
 on:
   push:
-    branches: [ master ]
-#  pull_request:
-#    branches: [ master ]
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
-# 사용할 인프라의 이름을 변수 형태로 저장 가능
-env:
-  # 버킷에 저장할 프로젝트 폴더 이름
-  PROJECT_NAME: morammoram_backend
-  # S3 생성 시 지정했던 이름
-  BUCKET_NAME: morambucket
-  # CodeDeploy의 앱 이름
-  CODE_DEPLOY_APP_NAME: moram-codedeploy
-  # CodeDeploy의 배포그룹 이름
-  DEPLOYMENT_GROUP_NAME: moram-codedeploy-deployment-group
-  
+permissions:
+  contents: read
 
 jobs:
   build:
-    # 실행 환경 지정
+
     runs-on: ubuntu-latest
 
-    # Task의 sequence를 명시한다.
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Set up JDK 17
-      uses: actions/setup-java@v1
-      with:
-        java-version: 17
-    
-    # application.properties 추가
-    - run : touch ./src/main/resources/application.properties
-    - run : echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
-    - run : cat ./src/main/resources/application.properties
-    
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    
-    # Gradle build (Test 제외)
-    - name: Build with Gradle
-      run: ./gradlew clean build -x test
-      
-    # 압축 파일 만들기
-    - name: Make Zip File
-      run: zip -qq -r ./$GITHUB_SHA.zip .
-      shell: bash
-      
-    # 권한 부여
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-northeast-2
-      
-    # S3로 파일을 업로드하는 동작
-    - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    # CodeDeploy에 배포단위를 생성하는 동작
-    - name: Code Deploy
-      run: aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+      - uses : actions/checkout@v3
+      - run : touch ./src/main/resources/application.properties
+      - run : echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
+      - run : cat ./src/main/resources/application.properties
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      - name: Make zip file
+        run: zip -r ./springboot-intro-build.zip .
+        shell: bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./springboot-intro-build.zip s3://morambucket/springboot-intro-build.zip
+
+      - name: CodeDeploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws deploy create-deployment \
+          --application-name MoramCodeDeploy \
+          --deployment-group-name Moram \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=morambucket,bundleType=zip,key=springboot-intro-build.zip \
+          --region ${{ secrets.AWS_REGION }}
