@@ -142,6 +142,10 @@ public class Application {
     @Column(columnDefinition = "varchar(50) default 'WAITING'")
     private String status;
 
+    // name 넘기는 용
+    @Column(name="user_name")
+    private String userName;
+
 
     @PrePersist // DB에 insert 되기 직전에 실행
     public void created_at(){

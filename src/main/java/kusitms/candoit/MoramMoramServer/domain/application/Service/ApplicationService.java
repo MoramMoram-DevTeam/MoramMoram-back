@@ -59,6 +59,7 @@ public class ApplicationService {
 
         Application app = applicationDto.toEntity();
         app.setUserId(getTokenInfo().getId());
+        app.setUserName(getTokenInfo().getName());
         app.setMarketId(fleamarket.getId());
 
         app.setItemImg(img1);
