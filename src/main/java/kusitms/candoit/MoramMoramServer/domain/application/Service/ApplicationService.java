@@ -47,7 +47,7 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application newApplication(Long m_id, ApplicationDto applicationDto, String img1, String img2) {
+    public Application newApplication(Long m_id, ApplicationDto applicationDto) {
 
         Fleamarket fleamarket = fleamarketRepository.findById(m_id).orElseThrow(() -> {
             throw new CustomException(CustomErrorCode.POST_NOT_FOUND);
@@ -58,15 +58,15 @@ public class ApplicationService {
         app.setUserName(getTokenInfo().getName());
         app.setMarketId(fleamarket.getId());
 
-        app.setItemImg(img1);
-        app.setCertificateImg(img2);
+//        app.setItemImg(img1);
+//        app.setCertificateImg(img2);
 
         return applicationRepository.save(app);
     }
 
 
     @Transactional
-    public Application editApplication(Application appDto, Long appId, String img1, String img2){
+    public Application editApplication(Application appDto, Long appId){
 
         Long userId = getTokenInfo().getId();
 
@@ -109,15 +109,15 @@ public class ApplicationService {
         app.setMirror(appDto.isMirror());
         app.setNone(appDto.isNone());
 
-        app.setMarketExp(appDto.getMarketExp());
+        app.setMarketExp(appDto.isMarketExp());
         app.setOnlineExp(appDto.isOnlineExp());
         app.setPriceAvg(appDto.getPriceAvg());
         app.setRequest(appDto.getRequest());
 //        app.setUtensil(appDto.getUtensil());
 
         // 이미지 처리 필요
-        app.setItemImg(img1);
-        app.setCertificateImg(img2);
+//        app.setItemImg(img1);
+//        app.setCertificateImg(img2);
 
         return applicationRepository.save(app);
     }

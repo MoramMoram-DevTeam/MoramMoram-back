@@ -38,7 +38,7 @@ public class ApplicationDto {
     private String subCategory4;
     private String subCategory5;
 
-    private Integer marketExp;
+    private boolean marketExp;
     private boolean onlineExp;
 
     // 가판대

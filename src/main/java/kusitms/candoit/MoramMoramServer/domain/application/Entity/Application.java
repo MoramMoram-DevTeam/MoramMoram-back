@@ -81,7 +81,7 @@ public class Application {
 
     @NotNull
     @Column(name = "market_exp")
-    private Integer marketExp;
+    private boolean marketExp;
 
     @NotNull
     @Column(name = "online_exp")
