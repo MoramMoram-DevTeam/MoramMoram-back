@@ -90,6 +90,7 @@ public class UserOfficeService {
                 .build();
 
         REGISTER_VALIDATION(request);
+
         userRepository.save(
                 User.builder()
                         .name(request.getName())
