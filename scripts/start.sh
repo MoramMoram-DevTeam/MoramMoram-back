@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT="/home/ec2-user/MoramMoram-back"
+PROJECT_ROOT="/home/ec2-user/app/deploy"
 JAR_FILE="$PROJECT_ROOT/build/libs/MoramMoram-Server-0.0.1-SNAPSHOT.jar"
 
 APP_LOG="$PROJECT_ROOT/application.log"
