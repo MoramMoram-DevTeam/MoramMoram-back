@@ -33,22 +33,20 @@ public class ApplicationController {
 
     // 신청서 작성하기
     @PostMapping("/new")
-    public ResponseEntity<?> newApplication(Long m_id, @RequestPart(value="data") ApplicationDto req,
-                                            @RequestPart(value="itemImg") MultipartFile multipartFile,
-                                            @RequestPart(value="certificate") MultipartFile multipartFile2) throws IOException {
+    public ResponseEntity<?> newApplication(Long m_id, @RequestBody ApplicationDto reqBody) {
 
-        String img1 = "";
-        String img2 = "";
+//        String img1 = "";
+//        String img2 = "";
+//
+//        if(multipartFile != null && !multipartFile.isEmpty()){
+//            img1 = applicationService.uploadImage(multipartFile);
+//        }
+//
+//        if(multipartFile2 != null && !multipartFile2.isEmpty()){
+//            img2 = applicationService.uploadImage(multipartFile2);
+//        }
 
-        if(multipartFile != null && !multipartFile.isEmpty()){
-            img1 = applicationService.uploadImage(multipartFile);
-        }
-
-        if(multipartFile2 != null && !multipartFile2.isEmpty()){
-            img2 = applicationService.uploadImage(multipartFile2);
-        }
-
-        Application applicationEntity = applicationService.newApplication(m_id, req, img1, img2);
+        Application applicationEntity = applicationService.newApplication(m_id, reqBody);
 
         Category c = categoryService.newCategory(applicationEntity);
         SubCategory s = subCategoryService.newSubCategory(applicationEntity);
@@ -64,22 +62,20 @@ public class ApplicationController {
 
     // 신청서 수정하기
     @PatchMapping("/edit/{applicationId}")
-    public BaseResponse<?> editApplication(@RequestPart(value="data") Application reqBody, @PathVariable Long applicationId,
-                                           @RequestPart(value="itemImg") MultipartFile multipartFile,
-                                           @RequestPart(value="certificate") MultipartFile multipartFile2) throws IOException {
+    public BaseResponse<?> editApplication(@RequestBody Application reqBody, @PathVariable Long applicationId) {
 
-        String img1 = "";
-        String img2 = "";
+//        String img1 = "";
+//        String img2 = "";
+//
+//        if(multipartFile != null && !multipartFile.isEmpty()){
+//            img1 = applicationService.uploadImage(multipartFile);
+//        }
+//
+//        if(multipartFile2 != null && !multipartFile2.isEmpty()){
+//            img2 = applicationService.uploadImage(multipartFile2);
+//        }
 
-        if(multipartFile != null && !multipartFile.isEmpty()){
-            img1 = applicationService.uploadImage(multipartFile);
-        }
-
-        if(multipartFile2 != null && !multipartFile2.isEmpty()){
-            img2 = applicationService.uploadImage(multipartFile2);
-        }
-
-        Application application = applicationService.editApplication(reqBody, applicationId, img1, img2);
+        Application application = applicationService.editApplication(reqBody, applicationId);
         categoryService.editCategory(application);
 //        subCategoryService.editSubCategory(application);
         return new BaseResponse<>(applicationId);
