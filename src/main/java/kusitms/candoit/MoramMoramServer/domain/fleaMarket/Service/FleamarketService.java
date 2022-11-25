@@ -53,6 +53,8 @@ public class FleamarketService {
                 NullPointerException::new
         );
 
+        fleamarketRepository.updateViewCount(m_id);
+
         return new ResponseEntity<>(FleamarketDto.detail.response(
                 fleamarket, String.valueOf(
                         likeRepository.countByMarketId(m_id)

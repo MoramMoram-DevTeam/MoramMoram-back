@@ -56,4 +56,6 @@ public class Fleamarket {
     @NotNull
     private String mImg;
 
+    private int views = 0;
+
 }
