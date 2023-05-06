@@ -6,6 +6,8 @@ import kusitms.candoit.MoramMoramServer.global.Model.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,8 +45,9 @@ public class UserController {
     @PatchMapping("auth/logout")
     @PreAuthorize("hasAnyRole('ADMIN','USER','OFFICE')")
     public ResponseEntity<Status> logout(
-            @RequestHeader(value = "Authorization") String auth
-    ) {
-        return userService.logout(auth);
+            @RequestHeader(value = "Authorization") String auth,
+            @AuthenticationPrincipal final UserDetails userDetails
+            ) {
+        return userService.logout(auth, userDetails);
     }
 }
