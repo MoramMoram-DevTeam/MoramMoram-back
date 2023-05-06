@@ -31,20 +31,20 @@ public class User {
 
     @NotNull
     @Size(min = 1, max = 255)
-    private String pw;
+    private String password;
 
     @NotNull
     @Size(min = 1, max = 255)
-    private String pnum;
+    private String phoneNumber;
 
     @Size(min = 1, max = 1000)
-    private String uimg;
+    private String userImage;
 
     @NotNull
-    private Boolean seller;
+    private Boolean seller = false;
 
     @NotNull
-    private Integer report;
+    private Integer report = 0;
 
     @NotNull
     private Boolean marketing;
