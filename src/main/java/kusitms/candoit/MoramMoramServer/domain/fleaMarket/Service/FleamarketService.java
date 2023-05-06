@@ -113,7 +113,7 @@ public class FleamarketService {
 
     @Transactional
     public ResponseEntity<List<FleamarketDto.ListDto>> searchFleaMarket(String fleaMarketName) {
-        List<Fleamarket> searchedFleaMarkets = fleamarketRepository.findByMarketNameContaining(fleaMarketName);
+        List<Fleamarket> searchedFleaMarkets = fleamarketRepository.findByFleaMarketNameContaining(fleaMarketName);
 
         List<FleamarketDto.ListDto> searchedFleaMarketsDto =
                 searchedFleaMarkets.stream().map(FleamarketDto.ListDto::response).toList();
@@ -153,9 +153,9 @@ public class FleamarketService {
 
     @Transactional
     public ResponseEntity<List<FleamarketDto.HostPostDetailDto>> readFleaMarketPostAll() {
-        List<FleamarketDto.HostPostDetailDto> hostPostDetailDtos =
+        List<FleamarketDto.HostPostDetailDto> hostPostDetailDto =
                 hostPostRepository.findAll().stream().map(FleamarketDto.HostPostDetailDto::response).toList();
-        return new ResponseEntity<>(hostPostDetailDtos, HttpStatus.OK);
+        return new ResponseEntity<>(hostPostDetailDto, HttpStatus.OK);
     }
 
     @Transactional
@@ -182,6 +182,7 @@ public class FleamarketService {
         );
     }
 
+    @Transactional
     public ResponseEntity<List<FleamarketDto.ListDto>> recommend() {
         List<Fleamarket> top10FleaMarkets = fleamarketRepository.findTop10ByOrderByViewsDesc();
         List<FleamarketDto.ListDto> top10FleaMarketsDto
@@ -190,8 +191,7 @@ public class FleamarketService {
         return new ResponseEntity<>(top10FleaMarketsDto, HttpStatus.OK);
     }
 
-    //이미지 넣기
-
+    // Validate & Method
     public String uploadImage(MultipartFile multipartFile) {
         //이미지 업로드
         LocalDate now = LocalDate.now();

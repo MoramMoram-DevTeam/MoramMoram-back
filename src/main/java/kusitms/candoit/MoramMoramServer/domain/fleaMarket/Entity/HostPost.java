@@ -24,8 +24,8 @@ public class HostPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Column(name = "office_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "office_id")
     private User user;
 
     @NotNull

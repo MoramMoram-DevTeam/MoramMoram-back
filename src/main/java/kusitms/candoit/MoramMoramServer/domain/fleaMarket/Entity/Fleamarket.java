@@ -27,22 +27,18 @@ public class Fleamarket {
     private User user;
 
     @NotNull
-    @Column(name = "m_name")
     private String fleaMarketName;
 
     @NotNull
-    @Column(name = "start")
     private LocalDate start;
 
     @NotNull
-    @Column(name = "end")
     private LocalDate end;
 
     @NotNull
     private LocalDate deadline;
 
     @NotNull
-    @Column(name = "m_note")
     private String fleaMarketNote;
 
     @NotNull

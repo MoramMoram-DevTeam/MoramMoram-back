@@ -65,7 +65,7 @@ public class ReviewService {
 
     }
 
-    @Transactional
+/*    @Transactional
     public List<Review> getReviews(Long m_id){
         Fleamarket fleamarket = fleamarketRepository.findFleamarketById(m_id);
         List<Review> reviews = reviewRepository.findAllByFleamarket(fleamarket);
@@ -73,6 +73,6 @@ public class ReviewService {
             throw new CustomException(CustomErrorCode.NOT_FOUND_FLEAMARKET);
         }
         return reviews;
-    }
+    }*/
 
 }

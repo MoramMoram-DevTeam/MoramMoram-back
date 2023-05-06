@@ -33,11 +33,11 @@ public class ReviewController {
         return new BaseResponse<>(r_id);
     }
 
-    // 마켓별 후기 리스트
+/*    // 마켓별 후기 리스트
     @GetMapping("/{marketId}")
     public ResponseEntity<?> reviews(@PathVariable Long marketId){
         List<Review> reviews = reviewService.getReviews(marketId);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
-    }
+    }*/
 
 }

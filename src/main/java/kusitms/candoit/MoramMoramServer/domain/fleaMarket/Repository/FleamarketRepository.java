@@ -9,8 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface FleamarketRepository extends JpaRepository<Fleamarket, Long> {
-    List<Fleamarket> findByMarketNameContaining(String m_name);
-    Fleamarket findFleamarketById(Long m_id);
+    List<Fleamarket> findByFleaMarketNameContaining(String m_name);
     List<Fleamarket> findTop10ByOrderByViewsDesc();
 //    findTop300By OrderBy SeqDesc
 }
