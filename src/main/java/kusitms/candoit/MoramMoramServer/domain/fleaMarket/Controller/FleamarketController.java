@@ -97,7 +97,7 @@ public class FleamarketController {
     }
 
     @GetMapping("/markets/recommend")
-    public List<Fleamarket> recommend() {
+    public ResponseEntity<List<FleamarketDto.ListDto>> recommend() {
         return fleamarketService.recommend();
     }
 }

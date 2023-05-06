@@ -126,7 +126,7 @@ public class FleamarketService {
             FleamarketDto.CreateFleaMarketDto request, MultipartFile multipartFile, UserDetails userDetails
     ) {
 
-        if(multipartFile.isEmpty()){
+        if (multipartFile.isEmpty()) {
             throw new CustomException(NEED_TO_FLEAMARKET_IMAGE);
         }
 
@@ -158,15 +158,22 @@ public class FleamarketService {
         return new ResponseEntity<>(hostPostDetailDtos, HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<Status> updateFleaMarketPost(Long hostPostId, FleamarketDto.UpdateFleaMarketDto request) {
         HostPost hostPost = getHostPost(hostPostId);
         hostPost.updateHostPost(
                 request.getFleaMarketName(), request.getStart(), request.getEnd(), request.getDeadline(),
                 request.getFleaMarketNote(), request.getPlace(), request.getCategory(), request.getOpen(),
                 request.getFleaMarketNoteImage()
-                );
+        );
 
         return new ResponseEntity<>(HOST_POST_EDIT_TRUE, HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<Status> deleteHostPost(Long hostPostId) {
+        hostPostRepository.deleteById(hostPostId);
+        return new ResponseEntity<>(HOST_POST_DELETE_TRUE, HttpStatus.OK);
     }
 
     private HostPost getHostPost(Long hostPostId) {
@@ -175,13 +182,12 @@ public class FleamarketService {
         );
     }
 
-    public ResponseEntity<Status> deleteHostPost(Long hostPostId) {
-        hostPostRepository.deleteById(hostPostId);
-        return new ResponseEntity<>(HOST_POST_DELETE_TRUE, HttpStatus.OK);
-    }
+    public ResponseEntity<List<FleamarketDto.ListDto>> recommend() {
+        List<Fleamarket> top10FleaMarkets = fleamarketRepository.findTop10ByOrderByViewsDesc();
+        List<FleamarketDto.ListDto> top10FleaMarketsDto
+                = top10FleaMarkets.stream().map(FleamarketDto.ListDto::response).toList();
 
-    public List<Fleamarket> recommend() {
-        return fleamarketRepository.findTop10ByOrderByViewsDesc();
+        return new ResponseEntity<>(top10FleaMarketsDto, HttpStatus.OK);
     }
 
     //이미지 넣기
@@ -201,6 +207,7 @@ public class FleamarketService {
         }
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
+
     private User getUser(UserDetails userDetails) {
         return userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_USER)
