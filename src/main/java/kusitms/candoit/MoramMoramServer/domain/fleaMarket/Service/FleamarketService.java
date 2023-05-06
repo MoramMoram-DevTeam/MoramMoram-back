@@ -103,12 +103,13 @@ public class FleamarketService {
         return new ResponseEntity<>(FLEAMARKET_LIKE_TRUE, HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Like>> like_list() {
-        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
-                .orElseThrow(
-                        NullPointerException::new
-                );
-        return new ResponseEntity<>(likeRepository.findByUser(user), HttpStatus.OK);
+    public ResponseEntity<List<FleamarketDto.LikeDetailDto>> fetchLikedFleaMarketsByUser(UserDetails userDetails) {
+        User user = getUser(userDetails);
+        List<Like> myLikes = user.getLikes();
+        List<FleamarketDto.LikeDetailDto> myLikesDto =
+                myLikes.stream().map(FleamarketDto.LikeDetailDto::response).toList();
+
+        return new ResponseEntity<>(myLikesDto, HttpStatus.OK);
     }
 
     @Transactional

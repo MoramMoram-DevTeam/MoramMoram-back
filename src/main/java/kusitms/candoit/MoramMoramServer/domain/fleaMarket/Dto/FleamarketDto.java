@@ -1,6 +1,7 @@
 package kusitms.candoit.MoramMoramServer.domain.fleaMarket.Dto;
 
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Fleamarket;
+import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Like;
 import kusitms.candoit.MoramMoramServer.domain.user.Dto.UserDto;
 import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
 import lombok.AllArgsConstructor;
@@ -94,6 +95,21 @@ public class FleamarketDto {
     @Builder
     public static class LikeAddDto{
         private Long marketId;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class LikeDetailDto{
+        private Long id;
+        private Long marketName;
+        public static LikeDetailDto response(Like like) {
+            return LikeDetailDto.builder()
+                    .id(like.getId())
+                    .marketName(like.getFleaMarket().getId())
+                    .build();
+        }
     }
 
 

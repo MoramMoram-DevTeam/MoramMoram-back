@@ -58,11 +58,12 @@ public class FleamarketController {
         return fleamarketService.toggleFleaMarketLike(request, userDetails);
     }
 
-    // 찜한 플리마켓 보기
     @GetMapping("/wish-markets")
     @PreAuthorize("hasAnyRole('ADMIN','USER','OFFICE')")
-    public ResponseEntity<List<Like>> like_list() {
-        return fleamarketService.like_list();
+    public ResponseEntity<List<FleamarketDto.LikeDetailDto>> getLikedFleaMarkets(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        return fleamarketService.fetchLikedFleaMarketsByUser(userDetails);
     }
 
     // 주최 글 작성
