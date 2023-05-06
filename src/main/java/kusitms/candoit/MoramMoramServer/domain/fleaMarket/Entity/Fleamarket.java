@@ -1,5 +1,6 @@
 package kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity;
 
+import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -21,13 +22,13 @@ public class Fleamarket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Column(name = "office_id")
-    private Long officeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "office_id")
+    private User user;
 
     @NotNull
-    @Column(name = "market_name")
-    private String marketName;
+    @Column(name = "m_name")
+    private String fleaMarketName;
 
     @NotNull
     @Column(name = "start")
@@ -42,7 +43,7 @@ public class Fleamarket {
 
     @NotNull
     @Column(name = "m_note")
-    private String mNote;
+    private String fleaMarketNote;
 
     @NotNull
     private String place;
@@ -53,7 +54,7 @@ public class Fleamarket {
     @NotNull
     private Boolean open;
 
-    private String mImg;
+    private String fleaMarketImage;
 
     @Builder.Default
     private Integer views = 0;

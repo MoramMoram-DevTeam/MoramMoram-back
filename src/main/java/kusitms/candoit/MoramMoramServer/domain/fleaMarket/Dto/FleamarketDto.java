@@ -2,16 +2,12 @@ package kusitms.candoit.MoramMoramServer.domain.fleaMarket.Dto;
 
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Fleamarket;
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Like;
-import kusitms.candoit.MoramMoramServer.domain.user.Dto.UserDto;
 import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -24,29 +20,29 @@ public class FleamarketDto {
     public static class ListDto {
         private Long id;
         private Long officeId;
-        private String mName;
+        private String getFleaMarketName;
         private LocalDate start;
         private LocalDate end;
         private LocalDate deadline;
-        private String mNote;
+        private String getFleaMarketNote;
         private String place;
         private String category;
         private Boolean open;
-        private String mImg;
+        private String getFleaMarketImage;
         private Integer views;
         public static ListDto response(@NotNull Fleamarket fleamarket) {
             return ListDto.builder()
                     .id(fleamarket.getId())
-                    .officeId(fleamarket.getOfficeId())
-                    .mName(fleamarket.getMarketName())
+                    .officeId(fleamarket.getUser().getId())
+                    .getFleaMarketName(fleamarket.getFleaMarketName())
                     .start(fleamarket.getStart())
                     .end(fleamarket.getEnd())
                     .deadline(fleamarket.getDeadline())
-                    .mNote(fleamarket.getMNote())
+                    .getFleaMarketNote(fleamarket.getFleaMarketNote())
                     .place(fleamarket.getPlace())
                     .category(fleamarket.getCategory())
                     .open(fleamarket.getOpen())
-                    .mImg(fleamarket.getMImg())
+                    .getFleaMarketImage(fleamarket.getFleaMarketImage())
                     .views(fleamarket.getViews())
                     .build();
         }
@@ -59,30 +55,30 @@ public class FleamarketDto {
     public static class DetailDto {
         private Long id;
         private Long officeId;
-        private String mName;
+        private String getFleaMarketName;
         private LocalDate start;
         private LocalDate end;
         private LocalDate deadline;
-        private String mNote;
+        private String getFleaMarketNote;
         private String place;
         private String category;
         private Boolean open;
-        private String mImg;
+        private String fleaMarketImage;
         private Integer views;
         private String likeCount;
         public static DetailDto response(@NotNull Fleamarket fleamarket, String likeCount) {
             return DetailDto.builder()
                     .id(fleamarket.getId())
-                    .officeId(fleamarket.getOfficeId())
-                    .mName(fleamarket.getMarketName())
+                    .officeId(fleamarket.getUser().getId())
+                    .getFleaMarketName(fleamarket.getFleaMarketName())
                     .start(fleamarket.getStart())
                     .end(fleamarket.getEnd())
                     .deadline(fleamarket.getDeadline())
-                    .mNote(fleamarket.getMNote())
+                    .getFleaMarketNote(fleamarket.getFleaMarketNote())
                     .place(fleamarket.getPlace())
                     .category(fleamarket.getCategory())
                     .open(fleamarket.getOpen())
-                    .mImg(fleamarket.getMImg())
+                    .fleaMarketImage(fleamarket.getFleaMarketImage())
                     .views(fleamarket.getViews())
                     .likeCount(likeCount)
                     .build();
@@ -117,18 +113,18 @@ public class FleamarketDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class hostpost_add{
+    public static class createFleaMarketDto{
         private Long id;
-        private Long officeid;
-        private String mname;
+        private User user;
+        private String fleaMarketName;
         private LocalDate start;
         private LocalDate end;
         private LocalDate deadline;
-        private String mnote;
+        private String fleaMarketNote;
         private String place;
         private String category;
         private Boolean open;
-        private String mimg;
+        private String fleaMarketNoteImage;
         private String count;
     }
 

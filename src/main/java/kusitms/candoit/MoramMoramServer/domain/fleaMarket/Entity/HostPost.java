@@ -1,5 +1,6 @@
 package kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity;
 
+import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -25,11 +26,11 @@ public class HostPost {
 
     @NotNull
     @Column(name = "office_id")
-    private Long officeId;
+    private User user;
 
     @NotNull
-    @Column(name = "market_name")
-    private String marketName;
+    @Column(name = "m_name")
+    private String fleaMarketName;
 
     @NotNull
     @Column(name = "start")
@@ -44,7 +45,7 @@ public class HostPost {
 
     @NotNull
     @Column(name = "m_note")
-    private String mNote;
+    private String fleaMarketNote;
 
     @NotNull
     private String place;
@@ -56,7 +57,7 @@ public class HostPost {
     private Boolean open;
 
     @NotNull
-    private String mImg;
+    private String fleaMarketImage;
 
     @NotNull
     @CreatedDate

@@ -31,8 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.NOT_FOUND_FLEAMARKET;
-import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.NOT_FOUND_USER;
+import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.*;
 import static kusitms.candoit.MoramMoramServer.global.Model.Status.*;
 
 @Service
@@ -122,28 +121,31 @@ public class FleamarketService {
         return new ResponseEntity<>(searchedFleaMarketsDto, HttpStatus.OK);
     }
 
-    public ResponseEntity<Status> hostpost_add(FleamarketDto.hostpost_add request, String img) {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+    public ResponseEntity<Status> createFleaMarketPost(
+            FleamarketDto.createFleaMarketDto request, MultipartFile multipartFile, UserDetails userDetails
+    ) {
 
-        User user = userRepository.findByEmail(name).orElseThrow(
-                NullPointerException::new
-        );
+        if(multipartFile.isEmpty()){
+            throw new CustomException(NEED_TO_FLEAMARKET_IMAGE);
+        }
+
+        User user = getUser(userDetails);
+        String fleaMarketImageUrl = uploadImage(multipartFile);
 
         hostPostRepository.save(
                 HostPost.builder()
-                        .officeId(user.getId())
-                        .marketName(request.getMname())
+                        .user(user)
+                        .fleaMarketName(request.getFleaMarketName())
                         .start(request.getStart())
                         .end(request.getEnd())
                         .deadline(request.getDeadline())
-                        .mNote(request.getMnote())
+                        .fleaMarketNote(request.getFleaMarketNote())
                         .place(request.getPlace())
                         .category(request.getCategory())
                         .open(request.getOpen())
-                        .mImg(img)
+                        .fleaMarketImage(fleaMarketImageUrl)
                         .build()
         );
-
 
         return new ResponseEntity<>(HOST_POST_ADD_TRUE, HttpStatus.OK);
     }
@@ -188,19 +190,20 @@ public class FleamarketService {
 
     //이미지 넣기
 
-    public String uploadImage(MultipartFile multipartFile) throws IOException {
+    public String uploadImage(MultipartFile multipartFile) {
         //이미지 업로드
         LocalDate now = LocalDate.now();
         String uuid = UUID.randomUUID() + toString();
         String fileName = uuid + "_" + multipartFile.getOriginalFilename();
         String market_img = "markets/" + now + "/" + fileName;
         ObjectMetadata objMeta = new ObjectMetadata();
-        objMeta.setContentLength(multipartFile.getInputStream().available());
-        amazonS3Client.putObject(bucket, market_img, multipartFile.getInputStream(), objMeta);
-
-        String img = amazonS3Client.getUrl(bucket, fileName).toString();
-
-        return img;
+        try {
+            objMeta.setContentLength(multipartFile.getInputStream().available());
+            amazonS3Client.putObject(bucket, market_img, multipartFile.getInputStream(), objMeta);
+        } catch (IOException e) {
+            throw new CustomException(FAIL_UPLOAD_IMAGE);
+        }
+        return amazonS3Client.getUrl(bucket, fileName).toString();
     }
     private User getUser(UserDetails userDetails) {
         return userRepository.findByEmail(userDetails.getUsername()).orElseThrow(

@@ -66,23 +66,14 @@ public class FleamarketController {
         return fleamarketService.fetchLikedFleaMarketsByUser(userDetails);
     }
 
-    // 주최 글 작성
     @PostMapping("markets/register")
     @PreAuthorize("hasAnyRole('OFFICE')")
-    public ResponseEntity<Status> hostpost_add(
-            @RequestPart(value = "data") FleamarketDto.hostpost_add request,
-            @RequestPart(value="file") MultipartFile multipartFile
-    ) throws IOException {
-
-        String img = "";
-
-        if(multipartFile != null && !multipartFile.isEmpty()){
-            img = fleamarketService.uploadImage(multipartFile);
-        }
-
-//        Fleamarket fleamarket = fleamarketService.hostpost_add(request, img);
-
-        return fleamarketService.hostpost_add(request, img);
+    public ResponseEntity<Status> createFleaMarketPost(
+            @RequestPart(value = "data") FleamarketDto.createFleaMarketDto request,
+            @RequestPart(value="file") MultipartFile multipartFile,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        return fleamarketService.createFleaMarketPost(request, multipartFile, userDetails);
     }
 
     // 주최 글 조회

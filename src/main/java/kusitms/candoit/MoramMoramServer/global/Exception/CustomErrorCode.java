@@ -42,6 +42,7 @@ public enum CustomErrorCode {
 
     // 플리마켓
     NOT_FOUND_FLEAMARKET("존재하지 않는 플리마켓입니다."),
+    NEED_TO_FLEAMARKET_IMAGE("플리마켓 이미지는 필수입니다."),
 
     POST_NOT_FOUND("게시물을 찾을 수 없습니다."),
 
