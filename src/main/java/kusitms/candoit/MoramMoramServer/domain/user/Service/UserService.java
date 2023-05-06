@@ -44,24 +44,24 @@ public class UserService {
 
     // Validate 및 단순화 메소드
 
-    private void LOGIN_VALIDATE(UserDto.login request) {
+    private void LOGIN_VALIDATE(UserDto.LoginDto request) {
         userRepository.findByEmail(request.getEmail())
                 .orElseThrow(
                         () -> new CustomException(LOGIN_FALSE)
                 );
 
-        if (request.getPw().equals("google"))
+        if (request.getPassword().equals("google"))
             throw new CustomException(NOT_SOCIAL_LOGIN);
 
-        if (request.getPw().equals("kakao"))
+        if (request.getPassword().equals("kakao"))
             throw new CustomException(NOT_SOCIAL_LOGIN);
 
         if (!passwordEncoder.matches(
-                request.getPw(),
+                request.getPassword(),
                 userRepository.findByEmail(request.getEmail())
                         .orElseThrow(
                                 () -> new CustomException(LOGIN_FALSE)
-                        ).getPw())
+                        ).getPassword())
         ) {
             throw new CustomException(LOGIN_FALSE);
         }
@@ -111,56 +111,33 @@ public class UserService {
                         .build()
         );
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
+        String accessToken = tokenProvider.createToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
 
-        String atk = tokenProvider.createToken(authentication);
-        String rtk = tokenProvider.createRefreshToken(request.getEmail());
-
-        redisDao.setValues(request.getEmail(), rtk, Duration.ofDays(14));
-
-        return new ResponseEntity<>(UserDto.SaveDto.response(user, atk, rtk), HttpStatus.OK);
-    }
-
-    private static Set<Authority> getAuthorities() {
-        Authority authority = Authority.builder()
-                .authorityName("ROLE_USER")
-                .build();
-        return Collections.singleton(authority);
+        return new ResponseEntity<>(UserDto.SaveDto.response(user, accessToken, refreshToken), HttpStatus.OK);
     }
 
     //로그인
     @Transactional
-    public ResponseEntity<UserDto.loginResponse> login(UserDto.login request) {
+    public ResponseEntity<UserDto.LoginDto> login(UserDto.LoginDto request) {
         LOGIN_VALIDATE(request);
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPw());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String atk = tokenProvider.createToken(authentication);
-        String rtk = tokenProvider.createRefreshToken(request.getEmail());
-
-        redisDao.setValues(request.getEmail(), rtk, Duration.ofDays(14));
-
-        return new ResponseEntity<>(UserDto.loginResponse.response(
-                atk,
-                rtk
-        ), HttpStatus.OK);
+        Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
+        String accessToken = tokenProvider.createToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
+        return new ResponseEntity<>(UserDto.LoginDto.response(accessToken, refreshToken), HttpStatus.OK);
     }
 
     // accessToken 재발급
     @Transactional
-    public ResponseEntity<UserDto.loginResponse> reissue(String rtk) {
+    public ResponseEntity<UserDto.LoginDto> reissue(String rtk) {
         String username = tokenProvider.getRefreshTokenInfo(rtk);
         String rtkInRedis = redisDao.getValues(username);
 
         if (Objects.isNull(rtkInRedis) || !rtkInRedis.equals(rtk))
             throw new ServerException(REFRESH_TOKEN_IS_BAD_REQUEST); // 410
 
-        return new ResponseEntity<>(UserDto.loginResponse.response(
+        return new ResponseEntity<>(UserDto.LoginDto.response(
                 tokenProvider.reCreateToken(username),
                 null
         ), HttpStatus.OK);
@@ -183,11 +160,26 @@ public class UserService {
     }
 
     //셀러인지 아닌지 체크
+
     public boolean checkSeller(Long userId) {
         log.info("2번");
         Optional<User> result = userRepository.findSellerById(userId);
         User user = result.orElseThrow();
 
         return user.getSeller();
+    }
+    private static Set<Authority> getAuthorities() {
+        Authority authority = Authority.builder()
+                .authorityName("ROLE_USER")
+                .build();
+        return Collections.singleton(authority);
+    }
+
+    private Authentication getAuthentication(String request, String request1) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(request, request1);
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return authentication;
     }
 }

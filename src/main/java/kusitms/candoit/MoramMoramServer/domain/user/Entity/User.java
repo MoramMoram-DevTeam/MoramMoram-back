@@ -40,10 +40,10 @@ public class User {
     @Size(min = 1, max = 1000)
     private String userImage;
 
-    @NotNull
+    @Builder.Default
     private Boolean seller = false;
 
-    @NotNull
+    @Builder.Default
     private Integer report = 0;
 
     @NotNull

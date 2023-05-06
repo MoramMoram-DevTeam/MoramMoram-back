@@ -17,8 +17,8 @@ public class UserController {
 
     // 로그인
     @PostMapping("auth/login")
-    public ResponseEntity<UserDto.loginResponse> login(
-            @RequestBody UserDto.login request
+    public ResponseEntity<UserDto.LoginDto> login(
+            @RequestBody UserDto.LoginDto request
     ) {
         return userService.login(request);
     }
@@ -33,7 +33,7 @@ public class UserController {
 
     // 로그인 만료시 atk 재발급
     @GetMapping
-    public ResponseEntity<UserDto.loginResponse> reissue(
+    public ResponseEntity<UserDto.LoginDto> reissue(
             @RequestHeader(value = "REFRESH_TOKEN") String rtk
     ) {
         return userService.reissue(rtk);

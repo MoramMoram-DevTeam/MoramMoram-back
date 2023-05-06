@@ -22,17 +22,29 @@ public class UserDto implements Serializable {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Builder
-    public static class officeRegister {
+    public static class OfficeSaveDto {
         private Long id;
         private String name;
         private String email;
-        private String pw;
-        private String pnum;
-        private String uimg;
+        private String password;
+        private String phoneNumber;
+        private String userImage;
         private Boolean marketing;
         private String office_add;
         private String market_add;
+        private String accessToken;
+        private String refreshToken;
+
+        public static OfficeSaveDto response(User user, String accessToken, String refreshToken) {
+            return OfficeSaveDto.builder()
+                    .name(user.getName())
+                    .email(user.getEmail())
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .build();
+        }
     }
 
     @AllArgsConstructor
@@ -48,24 +60,36 @@ public class UserDto implements Serializable {
         private String phoneNumber;
         private String userImage;
         private Boolean marketing;
-        private String atk;
-        private String rtk;
+        private String accessToken;
+        private String refreshToken;
 
-        public static SaveDto response(User user, String atk, String rtk) {
+        public static SaveDto response(User user, String accessToken, String refreshToken) {
             return SaveDto.builder()
                     .email(user.getEmail())
                     .name(user.getName())
-                    .atk(atk)
-                    .rtk(rtk)
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
                     .build();
         }
     }
 
-    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Getter
     @Builder
-    public static class login {
-        private final String pw;
-        private final String email;
+    public static class LoginDto {
+        private String email;
+        private String password;
+        private String accessToken;
+        private String refreshToken;
+
+        public static LoginDto response(String accessToken, String refreshToken) {
+            return LoginDto.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .build();
+        }
     }
 
     @Data
@@ -74,20 +98,6 @@ public class UserDto implements Serializable {
         private final String pw;
         private final String email;
         private final String rtk;
-    }
-
-    @Data
-    @Builder
-    public static class loginResponse {
-        private final String atk;
-        private final String rtk;
-
-        public static loginResponse response(String atk, String rtk) {
-            return loginResponse.builder()
-                    .atk(atk)
-                    .rtk(rtk)
-                    .build();
-        }
     }
 
     @Data
