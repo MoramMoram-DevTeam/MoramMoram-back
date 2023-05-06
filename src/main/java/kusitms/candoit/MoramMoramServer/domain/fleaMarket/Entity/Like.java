@@ -1,5 +1,6 @@
 package kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity;
 
+import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -20,11 +21,13 @@ public class Like {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @NotNull
     private Long marketId;
 
-    @NotNull
-    private Long userId;
 
     @NotNull
     private String name;

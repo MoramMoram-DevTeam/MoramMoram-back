@@ -96,7 +96,7 @@ public class FleamarketService {
         likeRepository.save(
                 Like.builder()
                         .marketId(request.getMarketId())
-                        .userId(user.getId())
+                        .user(user)
                         .name(user.getName())
                         .build()
         );
