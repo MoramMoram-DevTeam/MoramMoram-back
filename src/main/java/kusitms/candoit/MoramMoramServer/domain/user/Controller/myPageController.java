@@ -23,9 +23,10 @@ public class myPageController {
     @DeleteMapping("user")
     @PreAuthorize("hasAnyRole('ADMIN','USER','OFFICE')")
     public ResponseEntity<Status> deleteUser(
-            @RequestBody final UserDto.delete request
+            @RequestBody final UserDto.DeleteDto request,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        return myPageService.delete(request);
+        return myPageService.delete(request, userDetails);
     }
 
     // 정보 조회

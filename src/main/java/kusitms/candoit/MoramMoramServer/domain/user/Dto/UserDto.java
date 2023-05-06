@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
 import lombok.*;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 public class UserDto implements Serializable {
@@ -15,8 +13,8 @@ public class UserDto implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class delete {
-        private String pw;
+    public static class DeleteDto {
+        private String password;
     }
 
     @Getter

@@ -50,11 +50,11 @@ public class myPageService {
 
     // 회원탈퇴
     @Transactional
-    public ResponseEntity<Status> delete(UserDto.delete request) {
-        if (!passwordEncoder.matches(request.getPw(), getTokenInfo().getPw())) {
-            throw new CustomException(USER_DELETE_STATUS_FALSE);
-        }
-        userRepository.deleteById(getTokenInfo().getId());
+    public ResponseEntity<Status> delete(UserDto.DeleteDto request, UserDetails userDetails) {
+        User user = getUser(userDetails);
+
+        passwordMatched(request.getPassword(), user.getPassword());
+        userRepository.delete(user);
 
         return new ResponseEntity<>(USER_DELETE_STATUS_TRUE, HttpStatus.OK);
     }
@@ -64,7 +64,6 @@ public class myPageService {
         User user = getUser(userDetails);
         return new ResponseEntity<>(UserDto.DetailDto.response(user), HttpStatus.OK);
     }
-
     private User getUser(UserDetails userDetails) {
         return userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_USER)
@@ -138,5 +137,11 @@ public class myPageService {
                         .build()
         );
         return new ResponseEntity<>(LICENSE_UPLOAD_TRUE, HttpStatus.OK);
+    }
+
+    private void passwordMatched(String inputPassword, String currentPassword) {
+        if (!passwordEncoder.matches(inputPassword, currentPassword)) {
+            throw new CustomException(USER_DELETE_STATUS_FALSE);
+        }
     }
 }
