@@ -52,9 +52,10 @@ public class myPageController {
     @PostMapping("/certificates/license/new")
     @PreAuthorize("hasAnyRole('ADMIN','USER','OFFICE')")
     public ResponseEntity<Status> licenseUpdate(
-            @RequestParam("file") MultipartFile multipartFile
-    ) throws IOException {
-        return myPageService.licenseUpdate(multipartFile);
+            @RequestParam("file") MultipartFile multipartFile,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        return myPageService.licenseUpdate(multipartFile, userDetails);
     }
 
 

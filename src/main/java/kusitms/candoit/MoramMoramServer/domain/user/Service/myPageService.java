@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,16 +37,7 @@ public class myPageService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    private TokenInfoResponseDto getTokenInfo() {
-        return TokenInfoResponseDto.Response(
-                Objects.requireNonNull(SecurityUtil.getCurrentUsername()
-                        .flatMap(
-                                userRepository::findOneWithAuthoritiesByEmail)
-                        .orElse(null))
-        );
-    }
-
-    // 회원탈퇴
+    // Service
     @Transactional
     public ResponseEntity<Status> delete(UserDto.DeleteDto request, UserDetails userDetails) {
         User user = getUser(userDetails);
@@ -58,77 +48,56 @@ public class myPageService {
         return new ResponseEntity<>(USER_DELETE_STATUS_TRUE, HttpStatus.OK);
     }
 
-    // 회원 정보 보기
+    @Transactional
     public ResponseEntity<UserDto.DetailDto> read(UserDetails userDetails) {
         User user = getUser(userDetails);
         return new ResponseEntity<>(UserDto.DetailDto.response(user), HttpStatus.OK);
     }
-    private User getUser(UserDetails userDetails) {
-        return userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
-                () -> new CustomException(NOT_FOUND_USER)
-        );
-    }
 
+    @Transactional
     public ResponseEntity<Status> updateImage(MultipartFile multipartFile, UserDetails userDetails) {
         User user = getUser(userDetails);
-        String profileImageUrl = uploadProfileImage(multipartFile);
+        String profileImageUrl = uploadProfileImage("profile/", user.getEmail(), multipartFile);
 
         user.updateUserImage(profileImageUrl);
 
         return new ResponseEntity<>(PROFILE_IMAGE_UPLOAD_TRUE, HttpStatus.OK);
     }
 
-    private String uploadProfileImage(MultipartFile multipartFile)  {
-        String profile_image_name = "profile/" + getTokenInfo().getEmail();
-        ObjectMetadata objMeta = new ObjectMetadata();
-        try {
-            objMeta.setContentLength(multipartFile.getInputStream().available());
-            amazonS3Client.putObject(bucket, profile_image_name, multipartFile.getInputStream(), objMeta);
-        } catch (IOException e) {
-            throw new CustomException(FAIL_UPLOAD_IMAGE);
-        }
+    @Transactional
+    public ResponseEntity<Status> licenseUpdate(MultipartFile multipartFile, UserDetails userDetails) {
+        User user = getUser(userDetails);
+        String uniqueValue = String.valueOf(UUID.randomUUID());
+        String businessRegistrationCertificateUrl = uploadProfileImage("license/", uniqueValue, multipartFile);
 
-        return amazonS3Client.getUrl(bucket, profile_image_name).toString();
-    }
+        user.updateBusinessRegistrationCertificate(businessRegistrationCertificateUrl);;
 
-    public ResponseEntity<Status> licenseUpdate(MultipartFile multipartFile) throws IOException {
-        // String ext = multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().lastIndexOf("."));
-        User user = userRepository.findByEmail(
-                SecurityContextHolder.getContext().getAuthentication()
-                        .getName()
-        ).orElseThrow(
-                NullPointerException::new
-        );
-
-        UUID uuid = UUID.randomUUID();
-
-        String officeAdd = "license/" + uuid;
-        ObjectMetadata objMeta = new ObjectMetadata();
-        objMeta.setContentLength(multipartFile.getInputStream().available());
-        amazonS3Client.putObject(bucket, officeAdd, multipartFile.getInputStream(), objMeta);
-
-        userRepository.save(
-                User.builder()
-                        .id(user.getId())
-                        .email(user.getEmail())
-                        .name(user.getName())
-                        .password(user.getPassword())
-                        .phoneNumber(user.getPhoneNumber())
-                        .seller(user.getSeller())
-                        .report(user.getReport())
-                        .officeAdd(amazonS3Client.getUrl(bucket, officeAdd).toString())
-                        .marketAdd(user.getMarketAdd())
-                        .marketing(user.getMarketing())
-                        .authorities(user.getAuthorities())
-                        .userImage(user.getUserImage())
-                        .build()
-        );
         return new ResponseEntity<>(LICENSE_UPLOAD_TRUE, HttpStatus.OK);
     }
 
+    // Validate & Method
     private void passwordMatched(String inputPassword, String currentPassword) {
         if (!passwordEncoder.matches(inputPassword, currentPassword)) {
             throw new CustomException(USER_DELETE_STATUS_FALSE);
         }
+    }
+
+    private String uploadProfileImage(String type, String uniqueValue, MultipartFile multipartFile) {
+        String profileImageName = type + uniqueValue;
+        ObjectMetadata objMeta = new ObjectMetadata();
+        try {
+            objMeta.setContentLength(multipartFile.getInputStream().available());
+            amazonS3Client.putObject(bucket, profileImageName, multipartFile.getInputStream(), objMeta);
+        } catch (IOException e) {
+            throw new CustomException(FAIL_UPLOAD_IMAGE);
+        }
+
+        return amazonS3Client.getUrl(bucket, profileImageName).toString();
+    }
+
+    private User getUser(UserDetails userDetails) {
+        return userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+                () -> new CustomException(NOT_FOUND_USER)
+        );
     }
 }

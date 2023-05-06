@@ -66,4 +66,8 @@ public class User {
     public void updateUserImage(String profileImageUrl) {
         this.userImage = profileImageUrl;
     }
+
+    public void updateBusinessRegistrationCertificate(String businessRegistrationCertificateUrl) {
+        this.officeAdd = businessRegistrationCertificateUrl;
+    }
 }
