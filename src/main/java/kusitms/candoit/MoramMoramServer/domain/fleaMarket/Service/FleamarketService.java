@@ -46,6 +46,7 @@ public class FleamarketService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    // Service
     @Transactional
     public ResponseEntity<List<FleamarketDto.ListDto>> mainPage() {
         List<Fleamarket> fleaMarkets = fleamarketRepository.findAll();

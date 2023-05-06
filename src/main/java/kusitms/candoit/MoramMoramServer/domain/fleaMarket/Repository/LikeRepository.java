@@ -13,5 +13,4 @@ import java.util.Optional;
 public interface LikeRepository extends JpaRepository<Like, Long> {
     Long countByFleaMarket(Fleamarket market);
     Optional<Like> findByFleaMarketAndUser(Fleamarket market, User user);
-    List<Like> findByUser(User user);
 }
