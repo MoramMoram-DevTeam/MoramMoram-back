@@ -6,7 +6,6 @@ import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
 import kusitms.candoit.MoramMoramServer.domain.user.Repository.UserRepository;
 import kusitms.candoit.MoramMoramServer.global.Exception.CustomException;
 import kusitms.candoit.MoramMoramServer.global.config.Jwt.TokenProvider;
-import kusitms.candoit.MoramMoramServer.global.config.RedisDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.util.Collections;
 import java.util.Set;
 
@@ -31,13 +30,49 @@ public class UserOfficeService {
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final RedisDao redisDao;
 
+    // Service
+    @Transactional
+    public ResponseEntity<UserDto.OfficeSaveDto> register(UserDto.OfficeSaveDto request) {
+        REGISTER_VALIDATION(request);
+
+        User user = userRepository.save(
+                User.builder()
+                        .name(request.getName())
+                        .email(request.getEmail())
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .phoneNumber(request.getPhoneNumber())
+                        .userImage(request.getUserImage())
+                        .marketing(request.getMarketing())
+                        .authorities(getAuthorities())
+                        .marketAdd(request.getMarket_add())
+                        .officeAdd(request.getOffice_add())
+                        .build()
+        );
+
+        Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
+        String accessToken = tokenProvider.createToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
+
+        return new ResponseEntity<>(UserDto.OfficeSaveDto.response(user, accessToken, refreshToken), HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<UserDto.LoginDto> login(UserDto.LoginDto request) {
+        LOGIN_VALIDATE(request);
+        Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
+        String accessToken = tokenProvider.createToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
+
+        return new ResponseEntity<>(UserDto.LoginDto.response(accessToken, refreshToken), HttpStatus.OK);
+    }
+
+    // Validate / Method
     private void REGISTER_VALIDATION(UserDto.OfficeSaveDto request) {
 /*        if (request.getEmail() == null || request.getPw() == null || request.getName() == null
                 || request.getWeight() == null || request.getHeight() == null)
             throw new CustomException(REGISTER_INFO_NULL);*/
-        if(request.getMarket_add() == null || request.getOffice_add() == null){
+        if (request.getMarket_add() == null || request.getOffice_add() == null) {
             throw new CustomException(OFFICE_ADD_OR_MAKET_ADD_IS_REQUIRED);
         }
 
@@ -82,61 +117,18 @@ public class UserOfficeService {
         }
     }
 
-    // Service
-
-    // 회원가입
-    public ResponseEntity<UserDto.OfficeSaveDto> register(UserDto.OfficeSaveDto request) {
-        REGISTER_VALIDATION(request);
-
-        User user = userRepository.save(
-                User.builder()
-                        .name(request.getName())
-                        .email(request.getEmail())
-                        .password(passwordEncoder.encode(request.getPassword()))
-                        .phoneNumber(request.getPhoneNumber())
-                        .userImage(request.getUserImage())
-                        .marketing(request.getMarketing())
-                        .authorities(getAuthorities())
-                        .marketAdd(request.getMarket_add())
-                        .officeAdd(request.getOffice_add())
-                        .build()
-        );
-
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String accessToken = tokenProvider.createToken(authentication);
-        String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
-
-        redisDao.setValues(request.getEmail(), refreshToken, Duration.ofDays(14));
-
-        return new ResponseEntity<>(UserDto.OfficeSaveDto.response(user, accessToken, refreshToken), HttpStatus.OK);
-    }
-
-    private static Set<Authority> getAuthorities() {
+    private Set<Authority> getAuthorities() {
         Authority authority = Authority.builder()
                 .authorityName("ROLE_OFFICE")
                 .build();
         return Collections.singleton(authority);
     }
 
-    public ResponseEntity<UserDto.LoginDto> login(UserDto.LoginDto request) {
-        LOGIN_VALIDATE(request);
+    private Authentication getAuthentication(String request, String request1) {
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+                new UsernamePasswordAuthenticationToken(request, request1);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String atk = tokenProvider.createToken(authentication);
-        String rtk = tokenProvider.createRefreshToken(request.getEmail());
-
-        redisDao.setValues(request.getEmail(), rtk, Duration.ofDays(14));
-
-        return new ResponseEntity<>(UserDto.LoginDto.response(
-                atk,
-                rtk
-        ), HttpStatus.OK);
+        return authentication;
     }
 }
