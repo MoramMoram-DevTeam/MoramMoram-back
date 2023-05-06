@@ -1,6 +1,5 @@
 package kusitms.candoit.MoramMoramServer.domain.user.Service;
 
-import kusitms.candoit.MoramMoramServer.domain.user.Dto.TokenInfoResponseDto;
 import kusitms.candoit.MoramMoramServer.domain.user.Dto.UserDto;
 import kusitms.candoit.MoramMoramServer.domain.user.Entity.Authority;
 import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
@@ -8,7 +7,6 @@ import kusitms.candoit.MoramMoramServer.domain.user.Repository.UserRepository;
 import kusitms.candoit.MoramMoramServer.global.Exception.CustomException;
 import kusitms.candoit.MoramMoramServer.global.Exception.ServerException;
 import kusitms.candoit.MoramMoramServer.global.Model.Status;
-import kusitms.candoit.MoramMoramServer.global.config.Jwt.SecurityUtil;
 import kusitms.candoit.MoramMoramServer.global.config.Jwt.TokenProvider;
 import kusitms.candoit.MoramMoramServer.global.config.RedisDao;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +25,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.*;
 import static kusitms.candoit.MoramMoramServer.global.Model.Status.LOGOUT_TRUE;
@@ -68,7 +67,7 @@ public class UserService {
         }
     }
 
-    private void REGISTER_VALIDATION(UserDto.register request) {
+    private void REGISTER_VALIDATION(UserDto.SaveDto request) {
 /*        if (request.getEmail() == null || request.getPw() == null || request.getName() == null
                 || request.getWeight() == null || request.getHeight() == null)
             throw new CustomException(REGISTER_INFO_NULL);*/
@@ -82,13 +81,13 @@ public class UserService {
         if (!request.getEmail().contains("@"))
             throw new CustomException(NOT_EMAIL_FORM);
 
-        if (!(request.getPw().length() > 5))
+        if (!(request.getPassword().length() > 5))
             throw new CustomException(PASSWORD_SIZE_ERROR);
 
-        if (!(request.getPw().contains("!") || request.getPw().contains("@") || request.getPw().contains("#")
-                || request.getPw().contains("$") || request.getPw().contains("%") || request.getPw().contains("^")
-                || request.getPw().contains("&") || request.getPw().contains("*") || request.getPw().contains("(")
-                || request.getPw().contains(")"))
+        if (!(request.getPassword().contains("!") || request.getPassword().contains("@") || request.getPassword().contains("#")
+                || request.getPassword().contains("$") || request.getPassword().contains("%") || request.getPassword().contains("^")
+                || request.getPassword().contains("&") || request.getPassword().contains("*") || request.getPassword().contains("(")
+                || request.getPassword().contains(")"))
         ) {
             throw new CustomException(NOT_CONTAINS_EXCLAMATIONMARK);
         }
@@ -97,28 +96,23 @@ public class UserService {
     // Service
     // 회원가입
     @Transactional
-    public ResponseEntity<UserDto.registerResponse> register(UserDto.register request) {
-        Authority authority = Authority.builder()
-                .authorityName("ROLE_USER")
-                .build();
-
+    public ResponseEntity<UserDto.SaveDto> register(UserDto.SaveDto request) {
         REGISTER_VALIDATION(request);
-        userRepository.save(
+
+        User user = userRepository.save(
                 User.builder()
                         .name(request.getName())
                         .email(request.getEmail())
-                        .pw(passwordEncoder.encode(request.getPw()))
-                        .pnum(request.getPnum())
-                        .uimg(request.getUimg())
-                        .seller(false)
-                        .report(0)
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .phoneNumber(request.getPhoneNumber())
+                        .userImage(request.getUserImage())
                         .marketing(request.getMarketing())
-                        .authorities(Collections.singleton(authority))
+                        .authorities(getAuthorities())
                         .build()
         );
 
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPw());
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -127,12 +121,14 @@ public class UserService {
 
         redisDao.setValues(request.getEmail(), rtk, Duration.ofDays(14));
 
-        return new ResponseEntity<>(UserDto.registerResponse.response(
-                request.getName(),
-                request.getEmail(),
-                atk,
-                rtk
-        ), HttpStatus.OK);
+        return new ResponseEntity<>(UserDto.SaveDto.response(user, atk, rtk), HttpStatus.OK);
+    }
+
+    private static Set<Authority> getAuthorities() {
+        Authority authority = Authority.builder()
+                .authorityName("ROLE_USER")
+                .build();
+        return Collections.singleton(authority);
     }
 
     //로그인

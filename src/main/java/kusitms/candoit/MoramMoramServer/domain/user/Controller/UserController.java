@@ -25,8 +25,8 @@ public class UserController {
 
     // 회원가입
     @PostMapping("sign-up")
-    public ResponseEntity<UserDto.registerResponse> register(
-            @RequestBody UserDto.register request
+    public ResponseEntity<UserDto.SaveDto> register(
+            @RequestBody UserDto.SaveDto request
     ) {
         return userService.register(request);
     }
