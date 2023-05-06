@@ -68,4 +68,20 @@ public class HostPost {
     @LastModifiedDate
     @Column(name = "update_at")
     private LocalDateTime updateAt;
+
+    public void updateHostPost(
+            String fleaMarketName, LocalDate start, LocalDate end,
+            LocalDate deadline, String fleaMarketNote, String place,
+            String category, Boolean open, String fleaMarketImage
+    ) {
+        this.fleaMarketName = fleaMarketName;
+        this.start = start;
+        this.end = end;
+        this.deadline = deadline;
+        this.fleaMarketNote = fleaMarketNote;
+        this.place = place;
+        this.category = category;
+        this.open = open;
+        this.fleaMarketImage = fleaMarketImage;
+    }
 }

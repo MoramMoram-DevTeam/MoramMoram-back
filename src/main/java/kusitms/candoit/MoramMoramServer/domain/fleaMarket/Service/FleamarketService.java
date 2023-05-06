@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,6 +101,7 @@ public class FleamarketService {
         return new ResponseEntity<>(FLEAMARKET_LIKE_TRUE, HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<List<FleamarketDto.LikeDetailDto>> fetchLikedFleaMarketsByUser(UserDetails userDetails) {
         User user = getUser(userDetails);
         List<Like> myLikes = user.getLikes();
@@ -121,8 +121,9 @@ public class FleamarketService {
         return new ResponseEntity<>(searchedFleaMarketsDto, HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<Status> createFleaMarketPost(
-            FleamarketDto.createFleaMarketDto request, MultipartFile multipartFile, UserDetails userDetails
+            FleamarketDto.CreateFleaMarketDto request, MultipartFile multipartFile, UserDetails userDetails
     ) {
 
         if(multipartFile.isEmpty()){
@@ -150,39 +151,32 @@ public class FleamarketService {
         return new ResponseEntity<>(HOST_POST_ADD_TRUE, HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<List<FleamarketDto.HostPostDetailDto>> readFleaMarketPostAll() {
         List<FleamarketDto.HostPostDetailDto> hostPostDetailDtos =
                 hostPostRepository.findAll().stream().map(FleamarketDto.HostPostDetailDto::response).toList();
         return new ResponseEntity<>(hostPostDetailDtos, HttpStatus.OK);
     }
 
-    public ResponseEntity<Status> hostpost_edit(Long m_id, FleamarketDto.hostpost_edit request) {
-        HostPost hostPost = hostPostRepository.findById(m_id).orElseThrow(
-                NullPointerException::new
-        );
-
-        hostPostRepository.save(
-                HostPost.builder()
-                        .id(m_id)
-                        .officeId(hostPost.getOfficeId())
-                        .marketName(request.getMname())
-                        .start(request.getStart())
-                        .end(request.getEnd())
-                        .deadline(request.getDeadline())
-                        .mNote(request.getMnote())
-                        .place(request.getPlace())
-                        .category(request.getCategory())
-                        .open(request.getOpen())
-                        .mImg(request.getMimg())
-                        .createAt(hostPost.getCreateAt())
-                        .build()
-        );
+    public ResponseEntity<Status> updateFleaMarketPost(Long hostPostId, FleamarketDto.UpdateFleaMarketDto request) {
+        HostPost hostPost = getHostPost(hostPostId);
+        hostPost.updateHostPost(
+                request.getFleaMarketName(), request.getStart(), request.getEnd(), request.getDeadline(),
+                request.getFleaMarketNote(), request.getPlace(), request.getCategory(), request.getOpen(),
+                request.getFleaMarketNoteImage()
+                );
 
         return new ResponseEntity<>(HOST_POST_EDIT_TRUE, HttpStatus.OK);
     }
 
-    public ResponseEntity<Status> hostpost_delete(Long m_id) {
-        hostPostRepository.deleteById(m_id);
+    private HostPost getHostPost(Long hostPostId) {
+        return hostPostRepository.findById(hostPostId).orElseThrow(
+                () -> new CustomException(NOT_FOUND_FLEAMARKET)
+        );
+    }
+
+    public ResponseEntity<Status> deleteHostPost(Long hostPostId) {
+        hostPostRepository.deleteById(hostPostId);
         return new ResponseEntity<>(HOST_POST_DELETE_TRUE, HttpStatus.OK);
     }
 

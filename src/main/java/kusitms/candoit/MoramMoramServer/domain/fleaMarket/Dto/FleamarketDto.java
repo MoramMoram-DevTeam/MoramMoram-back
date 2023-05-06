@@ -114,7 +114,7 @@ public class FleamarketDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class createFleaMarketDto{
+    public static class CreateFleaMarketDto{
         private Long id;
         private User user;
         private String fleaMarketName;
@@ -133,17 +133,17 @@ public class FleamarketDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class hostpost_edit{
+    public static class UpdateFleaMarketDto{
         private Long id;
-        private String mname;
+        private String fleaMarketName;
         private LocalDate start;
         private LocalDate end;
         private LocalDate deadline;
-        private String mnote;
+        private String fleaMarketNote;
         private String place;
         private String category;
         private Boolean open;
-        private String mimg;
+        private String fleaMarketNoteImage;
     }
 
     @Getter
