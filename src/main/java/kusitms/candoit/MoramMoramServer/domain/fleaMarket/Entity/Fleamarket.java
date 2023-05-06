@@ -55,6 +55,7 @@ public class Fleamarket {
 
     private String mImg;
 
+    @Builder.Default
     private Integer views = 0;
 
     public void updateViewCount() {

@@ -92,7 +92,7 @@ public class FleamarketDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class like{
+    public static class LikeAddDto{
         private Long marketId;
     }
 

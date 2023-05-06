@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,21 +49,20 @@ public class FleamarketController {
         return fleamarketService.searchFleaMarket(fleaMarketName);
     }
 
+    @PostMapping("wish")
+    @PreAuthorize("hasAnyRole('ADMIN','USER','OFFICE')")
+    public ResponseEntity<Status> toggleFleaMarketLike(
+            @RequestBody FleamarketDto.LikeAddDto request,
+            @AuthenticationPrincipal final UserDetails userDetails
+    ) {
+        return fleamarketService.toggleFleaMarketLike(request, userDetails);
+    }
 
     // 찜한 플리마켓 보기
     @GetMapping("/wish-markets")
     @PreAuthorize("hasAnyRole('ADMIN','USER','OFFICE')")
     public ResponseEntity<List<Like>> like_list() {
         return fleamarketService.like_list();
-    }
-
-    // 찜기능
-    @PostMapping("wish")
-    @PreAuthorize("hasAnyRole('ADMIN','USER','OFFICE')")
-    public ResponseEntity<Status> itemLike(
-            @RequestBody FleamarketDto.like request
-    ) {
-        return fleamarketService.itemLike(request);
     }
 
     // 주최 글 작성

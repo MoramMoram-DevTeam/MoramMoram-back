@@ -11,7 +11,6 @@ import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Repository.HostPostRep
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Repository.LikeRepository;
 import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
 import kusitms.candoit.MoramMoramServer.domain.user.Repository.UserRepository;
-import kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode;
 import kusitms.candoit.MoramMoramServer.global.Exception.CustomException;
 import kusitms.candoit.MoramMoramServer.global.Model.Status;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,9 +28,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.NOT_FOUND_FLEAMARKET;
+import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.NOT_FOUND_USER;
 import static kusitms.candoit.MoramMoramServer.global.Model.Status.*;
 
 @Service
@@ -78,42 +80,36 @@ public class FleamarketService {
         return new ResponseEntity<>(FleamarketDto.DetailDto.response(fleaMarket, likeCount), HttpStatus.OK);
     }
 
-    public ResponseEntity<Status> itemLike(FleamarketDto.like request) {
-        User user = userRepository.findByEmail(
-                SecurityContextHolder.getContext().getAuthentication().getName()
-                )
-                .orElseThrow(
-                NullPointerException::new
-        );
+    @Transactional
+    public ResponseEntity<Status> toggleFleaMarketLike(FleamarketDto.LikeAddDto request, UserDetails userDetails) {
+        User user = getUser(userDetails);
+        Optional<Like> myLikeOptional =
+                likeRepository.findByMarketIdAndUserId(request.getMarketId(), user.getId());
 
-        boolean present = likeRepository.findByMarketIdAndUserId(request.getMarketId(), user.getId()).isPresent();
-
-        if(present){
-            Long id = likeRepository.findByMarketIdAndUserId(request.getMarketId(), user.getId()).orElseThrow(
-                    NullPointerException::new
-            ).getId();
-            likeRepository.deleteById(
-                    id
-            );
-            return new ResponseEntity<>(FLEAMARKET_CANCEL_TRUE,HttpStatus.OK);
+        // 이미 좋아요를 누른 상태인 경우
+        if (myLikeOptional.isPresent()) {
+            Like myLike = myLikeOptional.get();
+            likeRepository.delete(myLike);
+            return new ResponseEntity<>(FLEAMARKET_CANCEL_TRUE, HttpStatus.OK);
         }
 
         likeRepository.save(
-                    Like.builder()
-                            .marketId(request.getMarketId())
-                            .userId(user.getId())
-                            .name(user.getName())
-                            .build()
-            );
-            return new ResponseEntity<>(FLEAMARKET_LIKE_TRUE, HttpStatus.OK);
+                Like.builder()
+                        .marketId(request.getMarketId())
+                        .userId(user.getId())
+                        .name(user.getName())
+                        .build()
+        );
+
+        return new ResponseEntity<>(FLEAMARKET_LIKE_TRUE, HttpStatus.OK);
     }
 
     public ResponseEntity<List<Like>> like_list() {
         Long user_id = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
-                        .orElseThrow(
-                                NullPointerException::new
+                .orElseThrow(
+                        NullPointerException::new
                 ).getId();
-        return new ResponseEntity<>(likeRepository.findByUserId(user_id),HttpStatus.OK);
+        return new ResponseEntity<>(likeRepository.findByUserId(user_id), HttpStatus.OK);
     }
 
     @Transactional
@@ -136,7 +132,7 @@ public class FleamarketService {
         hostPostRepository.save(
                 HostPost.builder()
                         .officeId(user.getId())
-                        .marketName(request. getMname())
+                        .marketName(request.getMname())
                         .start(request.getStart())
                         .end(request.getEnd())
                         .deadline(request.getDeadline())
@@ -149,12 +145,11 @@ public class FleamarketService {
         );
 
 
-
-        return new ResponseEntity<>(HOST_POST_ADD_TRUE,HttpStatus.OK);
+        return new ResponseEntity<>(HOST_POST_ADD_TRUE, HttpStatus.OK);
     }
 
     public ResponseEntity<List<HostPost>> hostpost_read() {
-        return new ResponseEntity<>(hostPostRepository.findAll(),HttpStatus.OK);
+        return new ResponseEntity<>(hostPostRepository.findAll(), HttpStatus.OK);
     }
 
     public ResponseEntity<Status> hostpost_edit(Long m_id, FleamarketDto.hostpost_edit request) {
@@ -179,15 +174,15 @@ public class FleamarketService {
                         .build()
         );
 
-        return new ResponseEntity<>(HOST_POST_EDIT_TRUE,HttpStatus.OK);
+        return new ResponseEntity<>(HOST_POST_EDIT_TRUE, HttpStatus.OK);
     }
 
     public ResponseEntity<Status> hostpost_delete(Long m_id) {
         hostPostRepository.deleteById(m_id);
-        return new ResponseEntity<>(HOST_POST_DELETE_TRUE,HttpStatus.OK);
+        return new ResponseEntity<>(HOST_POST_DELETE_TRUE, HttpStatus.OK);
     }
 
-    public List<Fleamarket> recommend(){
+    public List<Fleamarket> recommend() {
         return fleamarketRepository.findTop10ByOrderByViewsDesc();
     }
 
@@ -195,7 +190,7 @@ public class FleamarketService {
     public String uploadImage(MultipartFile multipartFile) throws IOException {
         //이미지 업로드
         LocalDate now = LocalDate.now();
-        String uuid = UUID.randomUUID()+toString();
+        String uuid = UUID.randomUUID() + toString();
         String fileName = uuid + "_" + multipartFile.getOriginalFilename();
         String market_img = "markets/" + now + "/" + fileName;
         ObjectMetadata objMeta = new ObjectMetadata();
@@ -207,4 +202,9 @@ public class FleamarketService {
         return img;
     }
 
+    private User getUser(UserDetails userDetails) {
+        return userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+                () -> new CustomException(NOT_FOUND_USER)
+        );
+    }
 }
