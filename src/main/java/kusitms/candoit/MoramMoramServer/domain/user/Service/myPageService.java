@@ -25,8 +25,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
-import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.NOT_FOUND_USER;
-import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.USER_DELETE_STATUS_FALSE;
+import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.*;
 import static kusitms.candoit.MoramMoramServer.global.Model.Status.*;
 
 @Service
@@ -70,38 +69,26 @@ public class myPageService {
         );
     }
 
-    public ResponseEntity<Status> updateImage(MultipartFile multipartFile) throws IOException {
-        // String ext = multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().lastIndexOf("."));
-        User user = userRepository.findByEmail(
-                SecurityContextHolder.getContext().getAuthentication()
-                        .getName()
-        ).orElseThrow(
-                NullPointerException::new
-        );
+    public ResponseEntity<Status> updateImage(MultipartFile multipartFile, UserDetails userDetails) {
+        User user = getUser(userDetails);
+        String profileImageUrl = uploadProfileImage(multipartFile);
 
-        String profile_image_name = "profile/" + getTokenInfo().getEmail();
-        ObjectMetadata objMeta = new ObjectMetadata();
-        objMeta.setContentLength(multipartFile.getInputStream().available());
-        amazonS3Client.putObject(bucket, profile_image_name, multipartFile.getInputStream(), objMeta);
-
-        userRepository.save(
-                User.builder()
-                        .id(user.getId())
-                        .email(user.getEmail())
-                        .name(user.getName())
-                        .password(user.getPassword())
-                        .phoneNumber(user.getPhoneNumber())
-                        .seller(user.getSeller())
-                        .report(user.getReport())
-                        .officeAdd(user.getOfficeAdd())
-                        .marketAdd(user.getMarketAdd())
-                        .marketing(user.getMarketing())
-                        .authorities(user.getAuthorities())
-                        .userImage(amazonS3Client.getUrl(bucket, profile_image_name).toString())
-                        .build()
-        );
+        user.updateUserImage(profileImageUrl);
 
         return new ResponseEntity<>(PROFILE_IMAGE_UPLOAD_TRUE, HttpStatus.OK);
+    }
+
+    private String uploadProfileImage(MultipartFile multipartFile)  {
+        String profile_image_name = "profile/" + getTokenInfo().getEmail();
+        ObjectMetadata objMeta = new ObjectMetadata();
+        try {
+            objMeta.setContentLength(multipartFile.getInputStream().available());
+            amazonS3Client.putObject(bucket, profile_image_name, multipartFile.getInputStream(), objMeta);
+        } catch (IOException e) {
+            throw new CustomException(FAIL_UPLOAD_IMAGE);
+        }
+
+        return amazonS3Client.getUrl(bucket, profile_image_name).toString();
     }
 
     public ResponseEntity<Status> licenseUpdate(MultipartFile multipartFile) throws IOException {

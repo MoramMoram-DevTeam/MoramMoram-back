@@ -42,9 +42,10 @@ public class myPageController {
     @PostMapping("user")
     @PreAuthorize("hasAnyRole('ADMIN','USER','OFFICE')")
     public ResponseEntity<Status> updateImage(
-            @RequestParam("file") MultipartFile multipartFile
-    ) throws IOException {
-        return myPageService.updateImage(multipartFile);
+            @RequestParam("file") MultipartFile multipartFile,
+            @AuthenticationPrincipal final UserDetails userDetails
+    ) {
+        return myPageService.updateImage(multipartFile, userDetails);
     }
 
     // 사업자 등록증 설정

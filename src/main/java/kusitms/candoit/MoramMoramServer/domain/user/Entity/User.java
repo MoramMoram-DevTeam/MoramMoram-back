@@ -63,4 +63,7 @@ public class User {
     private Set<Authority> authorities;
 
 
+    public void updateUserImage(String profileImageUrl) {
+        this.userImage = profileImageUrl;
+    }
 }
