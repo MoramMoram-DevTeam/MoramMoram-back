@@ -1,6 +1,8 @@
 package kusitms.candoit.MoramMoramServer.domain.fleaMarket.Repository;
 
+import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Fleamarket;
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Like;
+import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
-    Long countByMarketId(Long market_id);
-    Optional<Like> findByMarketIdAndUserId(Long market_id,Long user_id);
-    List<Like> findByUserId(Long user_id);
+    Long countByFleaMarket(Fleamarket market);
+    Optional<Like> findByFleaMarketAndUser(Fleamarket market, User user);
+    List<Like> findByUser(User user);
 }

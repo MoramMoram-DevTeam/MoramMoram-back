@@ -96,6 +96,7 @@ public class FleamarketDto {
         private Long marketId;
     }
 
+
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor

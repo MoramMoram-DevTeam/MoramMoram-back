@@ -25,10 +25,8 @@ public class Like {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @NotNull
-    private Long marketId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "market_id")
+    private Fleamarket fleaMarket;
 
-
-    @NotNull
-    private String name;
 }

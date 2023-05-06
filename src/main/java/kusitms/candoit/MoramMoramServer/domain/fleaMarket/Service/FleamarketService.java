@@ -70,11 +70,10 @@ public class FleamarketService {
 
     @Transactional
     public ResponseEntity<FleamarketDto.DetailDto> getFleaMarketDetail(Long fleaMarketId) {
-
-        String likeCount = likeRepository.countByMarketId(fleaMarketId).toString();
         Fleamarket fleaMarket = fleamarketRepository.findById(fleaMarketId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_FLEAMARKET)
         );
+        String likeCount = likeRepository.countByFleaMarket(fleaMarket).toString();
 
         fleaMarket.updateViewCount();
         return new ResponseEntity<>(FleamarketDto.DetailDto.response(fleaMarket, likeCount), HttpStatus.OK);
@@ -83,8 +82,9 @@ public class FleamarketService {
     @Transactional
     public ResponseEntity<Status> toggleFleaMarketLike(FleamarketDto.LikeAddDto request, UserDetails userDetails) {
         User user = getUser(userDetails);
+        Fleamarket fleamarket = getFleaMarket(request.getMarketId());
         Optional<Like> myLikeOptional =
-                likeRepository.findByMarketIdAndUserId(request.getMarketId(), user.getId());
+                likeRepository.findByFleaMarketAndUser(fleamarket, user);
 
         // 이미 좋아요를 누른 상태인 경우
         if (myLikeOptional.isPresent()) {
@@ -95,9 +95,8 @@ public class FleamarketService {
 
         likeRepository.save(
                 Like.builder()
-                        .marketId(request.getMarketId())
+                        .fleaMarket(fleamarket)
                         .user(user)
-                        .name(user.getName())
                         .build()
         );
 
@@ -105,11 +104,11 @@ public class FleamarketService {
     }
 
     public ResponseEntity<List<Like>> like_list() {
-        Long user_id = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(
                         NullPointerException::new
-                ).getId();
-        return new ResponseEntity<>(likeRepository.findByUserId(user_id), HttpStatus.OK);
+                );
+        return new ResponseEntity<>(likeRepository.findByUser(user), HttpStatus.OK);
     }
 
     @Transactional
@@ -187,6 +186,7 @@ public class FleamarketService {
     }
 
     //이미지 넣기
+
     public String uploadImage(MultipartFile multipartFile) throws IOException {
         //이미지 업로드
         LocalDate now = LocalDate.now();
@@ -201,10 +201,15 @@ public class FleamarketService {
 
         return img;
     }
-
     private User getUser(UserDetails userDetails) {
         return userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_USER)
+        );
+    }
+
+    private Fleamarket getFleaMarket(Long marketId) {
+        return fleamarketRepository.findById(marketId).orElseThrow(
+                () -> new CustomException(NOT_FOUND_FLEAMARKET)
         );
     }
 }
