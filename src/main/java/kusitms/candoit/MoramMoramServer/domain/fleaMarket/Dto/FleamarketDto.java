@@ -1,6 +1,7 @@
 package kusitms.candoit.MoramMoramServer.domain.fleaMarket.Dto;
 
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Fleamarket;
+import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.HostPost;
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Like;
 import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
 import lombok.AllArgsConstructor;
@@ -143,6 +144,39 @@ public class FleamarketDto {
         private String category;
         private Boolean open;
         private String mimg;
-        private String count;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class HostPostDetailDto{
+        private Long id;
+        private Long officeId;
+        private String fleaMarketName;
+        private LocalDate start;
+        private LocalDate end;
+        private LocalDate deadline;
+        private String fleaMarketNote;
+        private String place;
+        private String category;
+        private Boolean open;
+        private String fleaMarketImage;
+
+        public static HostPostDetailDto response(HostPost hostPost) {
+            return HostPostDetailDto.builder()
+                    .id(hostPost.getId())
+                    .officeId(hostPost.getUser().getId())
+                    .fleaMarketName(hostPost.getFleaMarketName())
+                    .start(hostPost.getStart())
+                    .end(hostPost.getEnd())
+                    .deadline(hostPost.getDeadline())
+                    .fleaMarketNote(hostPost.getFleaMarketNote())
+                    .place(hostPost.getPlace())
+                    .category(hostPost.getCategory())
+                    .open(hostPost.getOpen())
+                    .fleaMarketImage(hostPost.getFleaMarketImage())
+                    .build();
+        }
     }
 }

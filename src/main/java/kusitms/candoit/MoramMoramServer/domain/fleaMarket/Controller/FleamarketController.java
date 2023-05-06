@@ -79,8 +79,8 @@ public class FleamarketController {
     // 주최 글 조회
     @GetMapping("my-registrations")
     @PreAuthorize("hasAnyRole('ADMIN','OFFICE')")
-    public ResponseEntity<List<HostPost>> hostpost_read() {
-        return fleamarketService.hostpost_read();
+    public ResponseEntity<List<FleamarketDto.HostPostDetailDto>> readFleaMarketPostAll() {
+        return fleamarketService.readFleaMarketPostAll();
     }
 
     // 주최 글 수정

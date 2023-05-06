@@ -150,8 +150,10 @@ public class FleamarketService {
         return new ResponseEntity<>(HOST_POST_ADD_TRUE, HttpStatus.OK);
     }
 
-    public ResponseEntity<List<HostPost>> hostpost_read() {
-        return new ResponseEntity<>(hostPostRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<FleamarketDto.HostPostDetailDto>> readFleaMarketPostAll() {
+        List<FleamarketDto.HostPostDetailDto> hostPostDetailDtos =
+                hostPostRepository.findAll().stream().map(FleamarketDto.HostPostDetailDto::response).toList();
+        return new ResponseEntity<>(hostPostDetailDtos, HttpStatus.OK);
     }
 
     public ResponseEntity<Status> hostpost_edit(Long m_id, FleamarketDto.hostpost_edit request) {
