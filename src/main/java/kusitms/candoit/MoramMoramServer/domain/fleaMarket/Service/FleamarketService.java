@@ -67,10 +67,10 @@ public class FleamarketService {
     }
 
     @Transactional
-    public ResponseEntity<FleamarketDto.DetailDto> getFleaMarketDetail(Long marketId) {
+    public ResponseEntity<FleamarketDto.DetailDto> getFleaMarketDetail(Long fleaMarketId) {
 
-        String likeCount = likeRepository.countByMarketId(marketId).toString();
-        Fleamarket fleaMarket = fleamarketRepository.findById(marketId).orElseThrow(
+        String likeCount = likeRepository.countByMarketId(fleaMarketId).toString();
+        Fleamarket fleaMarket = fleamarketRepository.findById(fleaMarketId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_FLEAMARKET)
         );
 
@@ -116,9 +116,14 @@ public class FleamarketService {
         return new ResponseEntity<>(likeRepository.findByUserId(user_id),HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Fleamarket>> searchpage(String m_name) {
-        log.info(m_name);
-        return new ResponseEntity<>(fleamarketRepository.findByMarketNameContaining(m_name), HttpStatus.OK);
+    @Transactional
+    public ResponseEntity<List<FleamarketDto.ListDto>> searchFleaMarket(String fleaMarketName) {
+        List<Fleamarket> searchedFleaMarkets = fleamarketRepository.findByMarketNameContaining(fleaMarketName);
+
+        List<FleamarketDto.ListDto> searchedFleaMarketsDto =
+                searchedFleaMarkets.stream().map(FleamarketDto.ListDto::response).toList();
+
+        return new ResponseEntity<>(searchedFleaMarketsDto, HttpStatus.OK);
     }
 
     public ResponseEntity<Status> hostpost_add(FleamarketDto.hostpost_add request, String img) {

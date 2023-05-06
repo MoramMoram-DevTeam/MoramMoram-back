@@ -35,16 +35,16 @@ public class FleamarketController {
 
     @GetMapping("markets/")
     public ResponseEntity<FleamarketDto.DetailDto> getFleaMarketDetail(
-            @RequestParam Long marketId
+            @RequestParam Long fleaMarketId
     ) {
-        return fleamarketService.getFleaMarketDetail(marketId);
+        return fleamarketService.getFleaMarketDetail(fleaMarketId);
     }
 
     @GetMapping("markets/search")
-    public ResponseEntity<List<Fleamarket>> searchpage(
-            @RequestParam String m_name
+    public ResponseEntity<List<FleamarketDto.ListDto>> searchFleaMarket(
+            @RequestParam String fleaMarketName
     ) {
-        return fleamarketService.searchpage(m_name);
+        return fleamarketService.searchFleaMarket(fleaMarketName);
     }
 
 
