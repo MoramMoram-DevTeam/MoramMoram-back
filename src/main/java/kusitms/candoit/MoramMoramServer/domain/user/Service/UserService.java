@@ -89,17 +89,15 @@ public class UserService {
 
     // accessToken 재발급
     @Transactional
-    public ResponseEntity<UserDto.LoginDto> reissue(String rtk) {
-        String username = tokenProvider.getRefreshTokenInfo(rtk);
-        String rtkInRedis = redisDao.getValues(username);
-
-        if (Objects.isNull(rtkInRedis) || !rtkInRedis.equals(rtk))
+    public ResponseEntity<UserDto.LoginDto> reissue(String refreshToken) {
+        String email = tokenProvider.getRefreshTokenInfo(refreshToken);
+        String refreshTokenKey = redisDao.getValues(email);
+        if (Objects.isNull(refreshTokenKey) || !refreshTokenKey.equals(refreshToken))
             throw new ServerException(REFRESH_TOKEN_IS_BAD_REQUEST); // 410
 
-        return new ResponseEntity<>(UserDto.LoginDto.response(
-                tokenProvider.reCreateToken(username),
-                null
-        ), HttpStatus.OK);
+        String newAccessToken = tokenProvider.reCreateToken(email);
+
+        return new ResponseEntity<>(UserDto.LoginDto.response(newAccessToken, null), HttpStatus.OK);
     }
 
     // 로그아웃

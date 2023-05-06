@@ -36,9 +36,9 @@ public class UserController {
     // 로그인 만료시 atk 재발급
     @GetMapping
     public ResponseEntity<UserDto.LoginDto> reissue(
-            @RequestHeader(value = "REFRESH_TOKEN") String rtk
+            @RequestHeader(value = "REFRESH_TOKEN") String refreshToken
     ) {
-        return userService.reissue(rtk);
+        return userService.reissue(refreshToken);
     }
 
     // 로그아웃
