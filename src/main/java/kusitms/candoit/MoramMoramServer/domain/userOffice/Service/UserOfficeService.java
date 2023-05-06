@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Set;
 
 import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.*;
 
@@ -32,7 +33,7 @@ public class UserOfficeService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RedisDao redisDao;
 
-    private void REGISTER_VALIDATION(UserDto.officeRegister request) {
+    private void REGISTER_VALIDATION(UserDto.OfficeSaveDto request) {
 /*        if (request.getEmail() == null || request.getPw() == null || request.getName() == null
                 || request.getWeight() == null || request.getHeight() == null)
             throw new CustomException(REGISTER_INFO_NULL);*/
@@ -46,36 +47,36 @@ public class UserOfficeService {
         if (!request.getEmail().contains("@"))
             throw new CustomException(NOT_EMAIL_FORM);
 
-        if (!(request.getPw().length() > 5))
+        if (!(request.getPassword().length() > 5))
             throw new CustomException(PASSWORD_SIZE_ERROR);
 
-        if (!(request.getPw().contains("!") || request.getPw().contains("@") || request.getPw().contains("#")
-                || request.getPw().contains("$") || request.getPw().contains("%") || request.getPw().contains("^")
-                || request.getPw().contains("&") || request.getPw().contains("*") || request.getPw().contains("(")
-                || request.getPw().contains(")"))
+        if (!(request.getPassword().contains("!") || request.getPassword().contains("@") || request.getPassword().contains("#")
+                || request.getPassword().contains("$") || request.getPassword().contains("%") || request.getPassword().contains("^")
+                || request.getPassword().contains("&") || request.getPassword().contains("*") || request.getPassword().contains("(")
+                || request.getPassword().contains(")"))
         ) {
             throw new CustomException(NOT_CONTAINS_EXCLAMATIONMARK);
         }
     }
 
-    private void LOGIN_VALIDATE(UserDto.login request) {
+    private void LOGIN_VALIDATE(UserDto.LoginDto request) {
         userRepository.findByEmail(request.getEmail())
                 .orElseThrow(
                         () -> new CustomException(LOGIN_FALSE)
                 );
 
-        if (request.getPw().equals("google"))
+        if (request.getPassword().equals("google"))
             throw new CustomException(NOT_SOCIAL_LOGIN);
 
-        if (request.getPw().equals("kakao"))
+        if (request.getPassword().equals("kakao"))
             throw new CustomException(NOT_SOCIAL_LOGIN);
 
         if (!passwordEncoder.matches(
-                request.getPw(),
+                request.getPassword(),
                 userRepository.findByEmail(request.getEmail())
                         .orElseThrow(
                                 () -> new CustomException(LOGIN_FALSE)
-                        ).getPw())
+                        ).getPassword())
         ) {
             throw new CustomException(LOGIN_FALSE);
         }
@@ -84,51 +85,47 @@ public class UserOfficeService {
     // Service
 
     // 회원가입
-    public ResponseEntity<UserDto.registerResponse> register(UserDto.officeRegister request) {
-        Authority authority = Authority.builder()
-                .authorityName("ROLE_OFFICE")
-                .build();
-
+    public ResponseEntity<UserDto.OfficeSaveDto> register(UserDto.OfficeSaveDto request) {
         REGISTER_VALIDATION(request);
 
-        userRepository.save(
+        User user = userRepository.save(
                 User.builder()
                         .name(request.getName())
                         .email(request.getEmail())
-                        .pw(passwordEncoder.encode(request.getPw()))
-                        .pnum(request.getPnum())
-                        .uimg(request.getUimg())
-                        .seller(false)
-                        .report(0)
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .phoneNumber(request.getPhoneNumber())
+                        .userImage(request.getUserImage())
                         .marketing(request.getMarketing())
-                        .authorities(Collections.singleton(authority))
+                        .authorities(getAuthorities())
                         .marketAdd(request.getMarket_add())
                         .officeAdd(request.getOffice_add())
                         .build()
         );
 
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPw());
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String atk = tokenProvider.createToken(authentication);
-        String rtk = tokenProvider.createRefreshToken(request.getEmail());
+        String accessToken = tokenProvider.createToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
 
-        redisDao.setValues(request.getEmail(), rtk, Duration.ofDays(14));
+        redisDao.setValues(request.getEmail(), refreshToken, Duration.ofDays(14));
 
-        return new ResponseEntity<>(UserDto.registerResponse.response(
-                request.getName(),
-                request.getEmail(),
-                atk,
-                rtk
-        ), HttpStatus.OK);
+        return new ResponseEntity<>(UserDto.OfficeSaveDto.response(user, accessToken, refreshToken), HttpStatus.OK);
     }
 
-    public ResponseEntity<UserDto.loginResponse> login(UserDto.login request) {
+    private static Set<Authority> getAuthorities() {
+        Authority authority = Authority.builder()
+                .authorityName("ROLE_OFFICE")
+                .build();
+        return Collections.singleton(authority);
+    }
+
+    public ResponseEntity<UserDto.LoginDto> login(UserDto.LoginDto request) {
         LOGIN_VALIDATE(request);
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPw());
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -137,7 +134,7 @@ public class UserOfficeService {
 
         redisDao.setValues(request.getEmail(), rtk, Duration.ofDays(14));
 
-        return new ResponseEntity<>(UserDto.loginResponse.response(
+        return new ResponseEntity<>(UserDto.LoginDto.response(
                 atk,
                 rtk
         ), HttpStatus.OK);

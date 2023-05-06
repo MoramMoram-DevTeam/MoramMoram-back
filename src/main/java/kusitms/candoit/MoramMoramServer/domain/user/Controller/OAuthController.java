@@ -46,11 +46,11 @@ public class OAuthController {
         return oAuthService.googlelogin(code);
     }
 
-    // Sosial 로그인 이후 추가 정보 요청
+/*    // Sosial 로그인 이후 추가 정보 요청
     @PostMapping("social/sign-up")
     public ResponseEntity<UserDto.registerResponse> socialRegister(
             @RequestBody final UserDto.register request
     ) {
         return oAuthService.socialRegister(request);
-    }
+    }*/
 }

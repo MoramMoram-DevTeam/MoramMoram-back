@@ -15,15 +15,15 @@ public class UserOfficeController {
 
     // 회원가입
     @PostMapping("company-user/sign-up")
-    public ResponseEntity<UserDto.registerResponse> register(
-            @RequestBody UserDto.officeRegister request
+    public ResponseEntity<UserDto.OfficeSaveDto> register(
+            @RequestBody UserDto.OfficeSaveDto request
     ) {
         return userOfficeService.register(request);
     }
 
     @PostMapping("auth/company/login")
-    public ResponseEntity<UserDto.loginResponse> login(
-            @RequestBody UserDto.login request
+    public ResponseEntity<UserDto.LoginDto> login(
+            @RequestBody UserDto.LoginDto request
     ) {
         return userOfficeService.login(request);
     }

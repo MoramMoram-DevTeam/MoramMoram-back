@@ -38,7 +38,7 @@ public class JwtUserService implements UserDetailsService {
                 .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
                 .collect(Collectors.toList());
         return new org.springframework.security.core.userdetails.User(user.getEmail(),
-                user.getPw(),
+                user.getPassword(),
                 grantedAuthorities
         );
     }

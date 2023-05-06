@@ -118,7 +118,7 @@ public class OAuthService {
         return Login(email, name, profileImagePath);
     }
 
-    // 추가 정보 요청 서비스
+/*    // 추가 정보 요청 서비스
     @Transactional
     public ResponseEntity<UserDto.registerResponse> socialRegister(UserDto.register request) {
         String social = null;
@@ -160,5 +160,5 @@ public class OAuthService {
                 atk,
                 rtk
         ), HttpStatus.OK);
-    }
+    }*/
 }

@@ -26,7 +26,7 @@ public class TokenInfoResponseDto {
                 .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
-                .pw(user.getPw())
+                .pw(user.getPassword())
                 .build();
     }
 }
