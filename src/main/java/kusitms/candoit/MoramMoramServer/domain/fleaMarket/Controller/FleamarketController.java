@@ -24,21 +24,20 @@ public class FleamarketController {
     private final FleamarketService fleamarketService;
 
     @GetMapping("markets")
-    public ResponseEntity<List<FleamarketDto.DetailDto>> getMainPage() {
+    public ResponseEntity<List<FleamarketDto.ListDto>> getMainPage() {
         return fleamarketService.mainPage();
     }
 
     @GetMapping("markets/deadline")
-    public ResponseEntity<List<FleamarketDto.DetailDto>> getMainPageSortedByDeadline() {
+    public ResponseEntity<List<FleamarketDto.ListDto>> getMainPageSortedByDeadline() {
         return fleamarketService.getMainPageSortedByDeadline();
     }
 
-    // 상세조회
     @GetMapping("markets/")
-    public ResponseEntity<FleamarketDto.detail> detailpage(
-            @RequestParam Long m_id
+    public ResponseEntity<FleamarketDto.DetailDto> getFleaMarketDetail(
+            @RequestParam Long marketId
     ) {
-        return fleamarketService.detailpage(m_id);
+        return fleamarketService.getFleaMarketDetail(marketId);
     }
 
     @GetMapping("markets/search")

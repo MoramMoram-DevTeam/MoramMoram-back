@@ -70,7 +70,7 @@ public class ReviewService {
         Fleamarket fleamarket = fleamarketRepository.findFleamarketById(m_id);
         List<Review> reviews = reviewRepository.findAllByFleamarket(fleamarket);
         if (fleamarket == null){
-            throw new CustomException(CustomErrorCode.MARKET_NOT_EXIST);
+            throw new CustomException(CustomErrorCode.NOT_FOUND_FLEAMARKET);
         }
         return reviews;
     }

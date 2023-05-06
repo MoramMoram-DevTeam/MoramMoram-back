@@ -11,6 +11,8 @@ import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Repository.HostPostRep
 import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Repository.LikeRepository;
 import kusitms.candoit.MoramMoramServer.domain.user.Entity.User;
 import kusitms.candoit.MoramMoramServer.domain.user.Repository.UserRepository;
+import kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode;
+import kusitms.candoit.MoramMoramServer.global.Exception.CustomException;
 import kusitms.candoit.MoramMoramServer.global.Model.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.NOT_FOUND_FLEAMARKET;
 import static kusitms.candoit.MoramMoramServer.global.Model.Status.*;
 
 @Service
@@ -44,39 +47,35 @@ public class FleamarketService {
     private String bucket;
 
     @Transactional
-    public ResponseEntity<List<FleamarketDto.DetailDto>> mainPage() {
+    public ResponseEntity<List<FleamarketDto.ListDto>> mainPage() {
         List<Fleamarket> fleaMarkets = fleamarketRepository.findAll();
-        List<FleamarketDto.DetailDto> fleaMarketsDto =
-                fleaMarkets.stream().map(FleamarketDto.DetailDto::response).toList();
+        List<FleamarketDto.ListDto> fleaMarketsDto =
+                fleaMarkets.stream().map(FleamarketDto.ListDto::response).toList();
 
         return new ResponseEntity<>(fleaMarketsDto, HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity<List<FleamarketDto.DetailDto>> getMainPageSortedByDeadline() {
+    public ResponseEntity<List<FleamarketDto.ListDto>> getMainPageSortedByDeadline() {
         List<Fleamarket> isSortedFleaMarkets =
                 fleamarketRepository.findAll(Sort.by(Sort.Direction.ASC, "end")).subList(0, 5);
 
-        List<FleamarketDto.DetailDto> sortedFleaMarketsDto =
-                isSortedFleaMarkets.stream().map(FleamarketDto.DetailDto::response).toList();
+        List<FleamarketDto.ListDto> sortedFleaMarketsDto =
+                isSortedFleaMarkets.stream().map(FleamarketDto.ListDto::response).toList();
 
         return new ResponseEntity<>(sortedFleaMarketsDto, HttpStatus.OK);
     }
 
-    // 플리마켓 상세조회
-    public ResponseEntity<FleamarketDto.detail> detailpage(Long m_id) {
+    @Transactional
+    public ResponseEntity<FleamarketDto.DetailDto> getFleaMarketDetail(Long marketId) {
 
-        Fleamarket fleamarket = fleamarketRepository.findById(m_id).orElseThrow(
-                NullPointerException::new
+        String likeCount = likeRepository.countByMarketId(marketId).toString();
+        Fleamarket fleaMarket = fleamarketRepository.findById(marketId).orElseThrow(
+                () -> new CustomException(NOT_FOUND_FLEAMARKET)
         );
 
-        fleamarketRepository.updateViewCount(m_id);
-
-        return new ResponseEntity<>(FleamarketDto.detail.response(
-                fleamarket, String.valueOf(
-                        likeRepository.countByMarketId(m_id)
-                )
-        ), HttpStatus.OK);
+        fleaMarket.updateViewCount();
+        return new ResponseEntity<>(FleamarketDto.DetailDto.response(fleaMarket, likeCount), HttpStatus.OK);
     }
 
     public ResponseEntity<Status> itemLike(FleamarketDto.like request) {

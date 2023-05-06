@@ -41,7 +41,7 @@ public enum CustomErrorCode {
     NO_AUTHORITY("접근 권한이 없습니다."),
 
     // 플리마켓
-    MARKET_NOT_EXIST("존재하지 않는 플리마켓입니다."),
+    NOT_FOUND_FLEAMARKET("존재하지 않는 플리마켓입니다."),
 
     POST_NOT_FOUND("게시물을 찾을 수 없습니다."),
 

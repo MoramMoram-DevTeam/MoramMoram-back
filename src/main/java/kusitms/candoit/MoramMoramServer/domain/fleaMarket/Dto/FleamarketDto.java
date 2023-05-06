@@ -20,6 +20,41 @@ public class FleamarketDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    public static class ListDto {
+        private Long id;
+        private Long officeId;
+        private String mName;
+        private LocalDate start;
+        private LocalDate end;
+        private LocalDate deadline;
+        private String mNote;
+        private String place;
+        private String category;
+        private Boolean open;
+        private String mImg;
+        private Integer views;
+        public static ListDto response(@NotNull Fleamarket fleamarket) {
+            return ListDto.builder()
+                    .id(fleamarket.getId())
+                    .officeId(fleamarket.getOfficeId())
+                    .mName(fleamarket.getMarketName())
+                    .start(fleamarket.getStart())
+                    .end(fleamarket.getEnd())
+                    .deadline(fleamarket.getDeadline())
+                    .mNote(fleamarket.getMNote())
+                    .place(fleamarket.getPlace())
+                    .category(fleamarket.getCategory())
+                    .open(fleamarket.getOpen())
+                    .mImg(fleamarket.getMImg())
+                    .views(fleamarket.getViews())
+                    .build();
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
     public static class DetailDto {
         private Long id;
         private Long officeId;
@@ -33,7 +68,8 @@ public class FleamarketDto {
         private Boolean open;
         private String mImg;
         private Integer views;
-        public static DetailDto response(@NotNull Fleamarket fleamarket) {
+        private String likeCount;
+        public static DetailDto response(@NotNull Fleamarket fleamarket, String likeCount) {
             return DetailDto.builder()
                     .id(fleamarket.getId())
                     .officeId(fleamarket.getOfficeId())
@@ -47,6 +83,7 @@ public class FleamarketDto {
                     .open(fleamarket.getOpen())
                     .mImg(fleamarket.getMImg())
                     .views(fleamarket.getViews())
+                    .likeCount(likeCount)
                     .build();
         }
     }

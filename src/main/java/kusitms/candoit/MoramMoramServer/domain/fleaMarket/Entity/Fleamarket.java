@@ -57,4 +57,8 @@ public class Fleamarket {
 
     private Integer views = 0;
 
+    public void updateViewCount() {
+        this.views += 1;
+    }
+
 }
