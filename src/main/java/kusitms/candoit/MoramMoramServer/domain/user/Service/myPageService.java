@@ -15,16 +15,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.Objects;
 import java.util.UUID;
 
+import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.NOT_FOUND_USER;
 import static kusitms.candoit.MoramMoramServer.global.Exception.CustomErrorCode.USER_DELETE_STATUS_FALSE;
 import static kusitms.candoit.MoramMoramServer.global.Model.Status.*;
 
@@ -59,19 +60,15 @@ public class myPageService {
     }
 
     // 회원 정보 보기
-    public ResponseEntity<UserDto.infoResponse> read() {
+    public ResponseEntity<UserDto.DetailDto> read(UserDetails userDetails) {
+        User user = getUser(userDetails);
+        return new ResponseEntity<>(UserDto.DetailDto.response(user), HttpStatus.OK);
+    }
 
-        UserDto.infoResponse user = UserDto.infoResponse.response(
-                userRepository.findByEmail(
-                        SecurityContextHolder.getContext()
-                                .getAuthentication()
-                                .getName()
-                ).orElseThrow(
-                        NullPointerException::new
-                )
+    private User getUser(UserDetails userDetails) {
+        return userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+                () -> new CustomException(NOT_FOUND_USER)
         );
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     public ResponseEntity<Status> updateImage(MultipartFile multipartFile) throws IOException {

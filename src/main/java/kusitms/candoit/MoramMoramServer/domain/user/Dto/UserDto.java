@@ -124,7 +124,7 @@ public class UserDto implements Serializable {
 
     @Data
     @Builder
-    public static class infoResponse {
+    public static class DetailDto {
         private Long id;
         private String name;
         private String email;
@@ -136,8 +136,8 @@ public class UserDto implements Serializable {
         private String officeAdd;
         private String marketAdd;
 
-        public static infoResponse response(@NotNull User user) {
-            return infoResponse.builder()
+        public static DetailDto response(@NotNull User user) {
+            return DetailDto.builder()
                     .id(user.getId())
                     .name(user.getName())
                     .email(user.getEmail())

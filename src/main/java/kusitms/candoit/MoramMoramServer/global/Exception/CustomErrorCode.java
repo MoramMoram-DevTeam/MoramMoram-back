@@ -13,6 +13,7 @@ public enum CustomErrorCode {
     REFRESH_TOKEN_IS_BAD_REQUEST("잘못된 RefreshToken 입니다 : null 이거나  not equals"),
     LOGIN_FALSE("아이디 또는 비밀번호를 잘못 입력하였습니다."),
     NOT_SOCIAL_LOGIN("소셜 아이디로 회원가입된 유저입니다."),
+    NOT_FOUND_USER("해당 유저를 찾을 수 없습니다."),
 
     //회원가입
     REGISTER_INFO_NULL("필수 항목을 입력하지 않았습니다."),
