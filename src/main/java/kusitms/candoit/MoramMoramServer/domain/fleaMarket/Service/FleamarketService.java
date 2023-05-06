@@ -25,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,15 +44,23 @@ public class FleamarketService {
     private String bucket;
 
     @Transactional
-    public ResponseEntity<List<Object>> mainpage() {
-        List<Fleamarket> fleamarkets = fleamarketRepository.findAll();
-        List<Fleamarket> fleamarketsTime = fleamarketRepository.findAll(Sort.by(Sort.Direction.ASC, "end")).subList(0, 5);
+    public ResponseEntity<List<FleamarketDto.DetailDto>> mainPage() {
+        List<Fleamarket> fleaMarkets = fleamarketRepository.findAll();
+        List<FleamarketDto.DetailDto> fleaMarketsDto =
+                fleaMarkets.stream().map(FleamarketDto.DetailDto::response).toList();
 
-        List<Object> fleamarketList = new ArrayList<>();
-        fleamarketList.add(fleamarketsTime);
-        fleamarketList.add(fleamarkets);
+        return new ResponseEntity<>(fleaMarketsDto, HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(fleamarketList, HttpStatus.OK);
+    @Transactional
+    public ResponseEntity<List<FleamarketDto.DetailDto>> getMainPageSortedByDeadline() {
+        List<Fleamarket> isSortedFleaMarkets =
+                fleamarketRepository.findAll(Sort.by(Sort.Direction.ASC, "end")).subList(0, 5);
+
+        List<FleamarketDto.DetailDto> sortedFleaMarketsDto =
+                isSortedFleaMarkets.stream().map(FleamarketDto.DetailDto::response).toList();
+
+        return new ResponseEntity<>(sortedFleaMarketsDto, HttpStatus.OK);
     }
 
     // 플리마켓 상세조회

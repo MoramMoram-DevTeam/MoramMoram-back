@@ -55,6 +55,6 @@ public class Fleamarket {
 
     private String mImg;
 
-    private int views = 0;
+    private Integer views = 0;
 
 }

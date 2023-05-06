@@ -24,16 +24,14 @@ public class FleamarketController {
     private final FleamarketService fleamarketService;
 
     @GetMapping("markets")
-    public ResponseEntity<List<Object>> mainpage() {
-        return fleamarketService.mainpage();
+    public ResponseEntity<List<FleamarketDto.DetailDto>> getMainPage() {
+        return fleamarketService.mainPage();
     }
 
-/*    @GetMapping("markets/{marketId}")
-    public ResponseEntity<FleamarketDto.detail> detailpage(
-            @PathVariable Long marketId
-    ){
-        return fleamarketService.detailpage(marketId);
-    }*/
+    @GetMapping("markets/deadline")
+    public ResponseEntity<List<FleamarketDto.DetailDto>> getMainPageSortedByDeadline() {
+        return fleamarketService.getMainPageSortedByDeadline();
+    }
 
     // 상세조회
     @GetMapping("markets/")

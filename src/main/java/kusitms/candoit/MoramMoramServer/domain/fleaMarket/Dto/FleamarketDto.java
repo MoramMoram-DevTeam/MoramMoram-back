@@ -20,7 +20,7 @@ public class FleamarketDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class detail {
+    public static class DetailDto {
         private Long id;
         private Long officeId;
         private String mName;
@@ -32,10 +32,9 @@ public class FleamarketDto {
         private String category;
         private Boolean open;
         private String mImg;
-        private String count;
-
-        public static FleamarketDto.detail response(@NotNull Fleamarket fleamarket,String count) {
-            return detail.builder()
+        private Integer views;
+        public static DetailDto response(@NotNull Fleamarket fleamarket) {
+            return DetailDto.builder()
                     .id(fleamarket.getId())
                     .officeId(fleamarket.getOfficeId())
                     .mName(fleamarket.getMarketName())
@@ -47,7 +46,7 @@ public class FleamarketDto {
                     .category(fleamarket.getCategory())
                     .open(fleamarket.getOpen())
                     .mImg(fleamarket.getMImg())
-                    .count(count)
+                    .views(fleamarket.getViews())
                     .build();
         }
     }
