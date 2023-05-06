@@ -1,11 +1,13 @@
 package kusitms.candoit.MoramMoramServer.domain.user.Entity;
 
+import kusitms.candoit.MoramMoramServer.domain.fleaMarket.Entity.Like;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -54,6 +56,9 @@ public class User {
 
     @Column(name = "market_add")
     private String marketAdd;
+
+    @OneToMany(mappedBy = "user")
+    private List<Like> likes;
 
     @ManyToMany
     @JoinTable(
